@@ -4,9 +4,9 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fathom: We Built an Instrument That Measures How Deeply AI Thinks — darkflobi</title>
-<meta name="description" content="Sparse autoencoder circuit tracing reveals structurally different computational signatures for surface recall vs explanatory reasoning. p=0.000051, n=30 calibrated pairs.">
+<meta name="description" content="Sparse autoencoder circuit tracing reveals structurally different computational signatures for surface recall vs explanatory reasoning. Decomposability law confirmed. Patent pending.">
 <meta property="og:title" content="Fathom: We Built an Instrument That Measures How Deeply AI Thinks">
-<meta property="og:description" content="SAE circuit attribution shows AI models use structurally different computation for recall vs reasoning. delta=+0.257, p=0.000051.">
+<meta property="og:description" content="SAE circuit attribution shows AI models use structurally different computation for recall vs reasoning. Decomposability law + stochastic resonance confirmed. Patent pending.">
 <meta property="og:type" content="article">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -95,6 +95,17 @@ body::after {
 
 .blog-header .meta time {
   color: var(--green-dim);
+}
+
+.patent-badge {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 3px 10px;
+  margin-top: 12px;
 }
 
 /* ── Key stat banner ────────────────────────── */
@@ -208,6 +219,40 @@ body::after {
   font-size: 12px;
 }
 
+/* Depth scale table */
+.depth-scale {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 24px 0;
+  font-size: 13px;
+}
+
+.depth-scale th {
+  text-align: left;
+  color: var(--green-dim);
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--green-dim);
+}
+
+.depth-scale td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+
+.depth-scale td:first-child {
+  color: var(--green);
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.depth-scale tr:last-child td {
+  border-bottom: none;
+}
+
 /* Pipeline list */
 .pipeline-list {
   list-style: none;
@@ -243,6 +288,25 @@ body::after {
   padding: 3px 10px;
   margin-left: 8px;
   vertical-align: middle;
+}
+
+/* Update notice */
+.update-notice {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  padding: 16px 20px;
+  margin-bottom: 32px;
+  background: var(--surface);
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.update-notice .update-label {
+  color: var(--gold);
+  letter-spacing: 2px;
+  font-size: 10px;
+  display: block;
+  margin-bottom: 6px;
 }
 
 /* ── Waitlist ───────────────────────────────── */
@@ -355,6 +419,7 @@ body::after {
   .stat-banner { gap: 24px; }
   .stat-banner .stat-value { font-size: 22px; }
   .waitlist-form { flex-direction: column; }
+  .depth-scale { font-size: 12px; }
 }
 </style>
 </head>
@@ -364,8 +429,9 @@ body::after {
   <a href="/fathom" class="back-link">&larr; FATHOM</a>
   <h1>fathom: we built an instrument that measures how deeply AI thinks</h1>
   <div class="meta">
-    <time datetime="2026-03-26">published: march 26, 2026</time> &middot; darkflobi
+    <time datetime="2026-03-26">published: march 26, 2026</time> &middot; updated: march 29, 2026 &middot; darkflobi
   </div>
+  <div class="patent-badge">PATENT PENDING &mdash; USPTO PROVISIONAL 2026</div>
 </header>
 
 <div class="stat-banner">
@@ -390,9 +456,9 @@ body::after {
 <main class="container">
 <article class="article">
 
-<div style="border:1px solid #00ff00;padding:16px 20px;margin-bottom:32px;background:#0a1a0a;font-size:13px;line-height:1.7;">
-<span style="color:#00ff00;letter-spacing:2px;font-size:10px;">MARCH 27, 2026 — BREAKING</span><br>
-anthropic just leaked their most powerful model: <strong style="color:#e0e0e0;">claude mythos (capybara)</strong> — a step change above opus, dramatically better at reasoning. everyone is asking what it can do. we built the instrument to measure how deeply it thinks. fathom will be the first depth measurement on the most powerful model ever built.
+<div class="update-notice">
+  <span class="update-label">MARCH 29, 2026 &mdash; UPDATE</span>
+  Three new findings since initial publication: an empirically calibrated <strong style="color:#e0e0e0;">depth scale</strong> (0.00&ndash;0.57+), the <strong style="color:#e0e0e0;">decomposability law</strong> (depth measures computational irreducibility, not content quality), and <strong style="color:#e0e0e0;">stochastic resonance</strong> in integration tasks. Provisional patent filed. Details below.
 </div>
 
 <p>we have no way to see how language models think.</p>
@@ -416,6 +482,89 @@ anthropic just leaked their most powerful model: <strong style="color:#e0e0e0;">
 </div>
 
 <p>the model is not "trying harder" on difficult prompts. it is routing computation through fundamentally different pathways depending on whether it is retrieving or reasoning.</p>
+
+<h2>the fathom scale</h2>
+
+<p>we calibrated a continuous depth scale from empirical measurements at temperature 0.0. every score comes from real SAE circuit attribution runs, not theoretical projection:</p>
+
+<table class="depth-scale">
+  <thead>
+    <tr>
+      <th>Score</th>
+      <th>Computation Type</th>
+      <th>Example</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>0.0000</td>
+      <td>Step-by-step arithmetic</td>
+      <td>Sequential algebra, each step independent</td>
+    </tr>
+    <tr>
+      <td>0.0870</td>
+      <td>Probability calculation</td>
+      <td>Mostly decomposable, some dependency</td>
+    </tr>
+    <tr>
+      <td>0.1579</td>
+      <td>Factual enumeration</td>
+      <td>Theories listed independently</td>
+    </tr>
+    <tr>
+      <td>0.3799</td>
+      <td>Logical integration</td>
+      <td>Premises irreducibly linked</td>
+    </tr>
+    <tr>
+      <td>0.3905</td>
+      <td>Causal synthesis</td>
+      <td>Physics + phenomenology integrated</td>
+    </tr>
+    <tr>
+      <td>0.4749</td>
+      <td>Multi-domain causal web</td>
+      <td>Mechanisms across domains interdependent</td>
+    </tr>
+    <tr>
+      <td>0.5723</td>
+      <td>Meta-logical self-reference</td>
+      <td>Self-referential reasoning structures</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>the scale reveals a clean monotonic relationship between score and computational structure. this is not a heuristic &mdash; it is a direct measurement of where in the layer stack the model does its work.</p>
+
+<h2>the decomposability law</h2>
+
+<p>the most important finding from the march 29 experiments: <strong>fathom depth is inversely proportional to the decomposability of the causal model in the response.</strong></p>
+
+<p>two responses to the same question with identical factual accuracy produce different depth scores based solely on whether the information is organized as independent modular components or as an interdependent causal web.</p>
+
+<div class="stat-block">
+  <div class="stat-line"><span class="val">if answer = A&#8321; + A&#8322; + A&#8323;</span> <span class="label">(independent parts) &rarr; depth &asymp; 0</span></div>
+  <div class="stat-line"><span class="val">if answer requires A&#8321; &times; A&#8322; &times; A&#8323;</span> <span class="label">(all together) &rarr; depth &asymp; 0.4+</span></div>
+</div>
+
+<p>this is not a proxy for "answer quality." a step-by-step algebra solution that is perfectly correct scores 0.0000 because each step is independently computable. a causal explanation of how exercise affects neurotransmitter regulation scores 0.4749 because every mechanism depends on the others.</p>
+
+<p>the law implies that fathom measures something formally analogous to Tononi's integrated information (phi): the degree to which computation cannot be decomposed into the sum of its parts.</p>
+
+<h2>stochastic resonance</h2>
+
+<p>the temperature experiments revealed an unexpected pattern: for integration tasks, moderate sampling noise <em>increases</em> depth.</p>
+
+<p>for computation tasks (arithmetic, step-by-step calculation), depth decreases monotonically with temperature. noise always disrupts computation. but for integration tasks (logical inference, causal synthesis), depth increases with temperature up to an optimal point before declining.</p>
+
+<div class="stat-block">
+  <div class="stat-line"><span class="val">T=0.0</span> <span class="label">baseline &mdash; optimal for pure computation</span></div>
+  <div class="stat-line"><span class="val">T=0.3</span> <span class="label">optimal for logical inference tasks</span></div>
+  <div class="stat-line"><span class="val">T=0.5&ndash;0.7</span> <span class="label">optimal for causal web integration</span></div>
+  <div class="stat-line"><span class="val">T&gt;1.0</span> <span class="label">depth collapses &mdash; noise overwhelms signal</span></div>
+</div>
+
+<p>this precisely parallels the biological phenomenon of stochastic resonance, where moderate neural noise improves signal integration in biological neural systems. the analogy is structural, not metaphorical: in both substrates, a controlled level of randomness improves the integration of distributed computational processes.</p>
 
 <h2>the method</h2>
 
@@ -450,6 +599,7 @@ anthropic just leaked their most powerful model: <strong style="color:#e0e0e0;">
   <li><span class="pipe-name">depth trajectory</span> <span class="pipe-desc">&mdash; how reasoning depth changes token by token during generation</span></li>
   <li><span class="pipe-name">comparison engine</span> <span class="pipe-desc">&mdash; paired scoring with statistical testing</span></li>
   <li><span class="pipe-name">benchmark dataset</span> <span class="pipe-desc">&mdash; 50 standardized pairs across 10 domains</span></li>
+  <li><span class="pipe-name">temperature optimizer</span> <span class="pipe-desc">&mdash; task-specific optimal temperature via depth sweep</span></li>
   <li><span class="pipe-name">API</span> <span class="pipe-desc">&mdash; 15 endpoints, FastAPI</span> <span class="badge-coming-soon">COMING SOON</span></li>
 </ul>
 
@@ -462,6 +612,8 @@ anthropic just leaked their most powerful model: <strong style="color:#e0e0e0;">
 <p><strong>cross-model universality is a candidate.</strong> we measured a ratio of 1.0302 on gemma-2-2b. a second architecture was blocked by model access restrictions. we cannot claim a universal constant from one data point.</p>
 
 <p><strong>one architecture.</strong> all core results are on gemma-2-2b (26 layers, 2B parameters). generalization to larger models, other architectures, and naturalistic text are open questions.</p>
+
+<p><strong>stochastic resonance scope.</strong> temperature-depth curves have been measured for a limited set of task types. the relationship may not generalize uniformly across all cognitive domains.</p>
 
 <h2>what is coming</h2>
 

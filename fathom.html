@@ -4,6 +4,10 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FATHOM — Measure How Deeply AI Thinks</title>
+<meta name="description" content="Reasoning depth scoring via SAE circuit attribution. Decomposability law confirmed. Stochastic resonance discovered. Patent pending.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -19,7 +23,8 @@
   --cyan: #00e5ff;
   --orange: #ff9800;
   --red: #ff3d00;
-  --mono: 'Cascadia Code', 'Fira Code', 'JetBrains Mono', 'Consolas', monospace;
+  --mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
+  --sans: 'Space Grotesk', -apple-system, sans-serif;
 }
 
 body {
@@ -29,6 +34,22 @@ body {
   font-size: 14px;
   line-height: 1.7;
   min-height: 100vh;
+}
+
+/* Scanline overlay */
+body::after {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: repeating-linear-gradient(
+    0deg,
+    transparent,
+    transparent 3px,
+    rgba(0,0,0,0.05) 3px,
+    rgba(0,0,0,0.05) 4px
+  );
+  pointer-events: none;
+  z-index: 999;
 }
 
 .container {
@@ -62,6 +83,17 @@ body {
   font-size: 12px;
   color: var(--text-dim);
   letter-spacing: 2px;
+}
+
+.patent-badge {
+  display: inline-block;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  padding: 3px 10px;
+  margin-top: 16px;
 }
 
 .hero .cta-row {
@@ -116,6 +148,7 @@ body {
 }
 
 .section h2 {
+  font-family: var(--sans);
   font-size: 22px;
   color: var(--green);
   margin-bottom: 16px;
@@ -127,6 +160,10 @@ body {
   max-width: 640px;
   margin: 0 auto 16px;
   text-align: center;
+}
+
+.section p.left {
+  text-align: left;
 }
 
 /* ── Discovery ────────────────────────────────── */
@@ -182,6 +219,85 @@ body {
 
 .terminal .highlight {
   color: var(--green);
+}
+
+/* ── Depth Scale ──────────────────────────────── */
+.depth-scale-visual {
+  max-width: 640px;
+  margin: 32px auto;
+}
+
+.scale-row {
+  display: flex;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 13px;
+}
+
+.scale-row:last-child { border-bottom: none; }
+
+.scale-score {
+  color: var(--green);
+  font-weight: 700;
+  min-width: 70px;
+  text-align: right;
+  margin-right: 16px;
+}
+
+.scale-bar-container {
+  flex: 1;
+  position: relative;
+}
+
+.scale-bar {
+  height: 4px;
+  background: var(--green);
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.scale-label {
+  color: var(--text);
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.scale-sublabel {
+  color: var(--text-dim);
+  font-size: 10px;
+}
+
+/* ── Decomposability ──────────────────────────── */
+.law-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--gold);
+  padding: 24px;
+  margin: 32px auto;
+  max-width: 640px;
+  font-size: 14px;
+  line-height: 1.9;
+  text-align: left;
+}
+
+.law-block .law-title {
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.law-block .law-formula {
+  color: var(--green);
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.law-block .law-desc {
+  color: var(--text-dim);
+  font-size: 12px;
 }
 
 /* ── Use Cases Grid ───────────────────────────── */
@@ -252,6 +368,49 @@ body {
   text-align: right;
 }
 
+/* ── Pricing ──────────────────────────────────── */
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  margin: 32px 0;
+}
+
+.price-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 24px 16px;
+  text-align: center;
+  transition: border-color 0.2s;
+}
+
+.price-card:hover {
+  border-color: var(--green-dim);
+}
+
+.price-card .tier {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+}
+
+.price-card .price {
+  font-size: 28px;
+  color: var(--green);
+  margin-bottom: 4px;
+}
+
+.price-card .price-sub {
+  font-size: 10px;
+  color: var(--text-dim);
+}
+
+.price-card.featured {
+  border-color: var(--green-dim);
+}
+
 /* ── Footer ───────────────────────────────────── */
 .footer {
   padding: 40px 0;
@@ -276,6 +435,7 @@ body {
 @media (max-width: 640px) {
   .hero h1 { font-size: 36px; letter-spacing: 12px; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .pricing-grid { grid-template-columns: repeat(2, 1fr); }
   .use-cases-grid { grid-template-columns: 1fr; }
   .endpoint .desc { display: none; }
 }
@@ -288,8 +448,10 @@ body {
   <h1>FATHOM</h1>
   <div class="tagline">Measure how deeply AI thinks.</div>
   <div class="sub">Reasoning depth scoring via SAE circuit attribution</div>
+  <div class="patent-badge">PATENT PENDING &mdash; USPTO PROVISIONAL 2026</div>
   <div class="cta-row">
     <a href="/fathom/waitlist" class="cta-primary">JOIN WAITLIST</a>
+    <a href="/fathom/blog" class="cta-secondary">READ THE PAPER</a>
     <a href="/dashboard" class="cta-secondary">LIVE DASHBOARD</a>
   </div>
 </div>
@@ -332,9 +494,121 @@ body {
   </div>
 </div>
 
+<!-- ── The Fathom Scale ────────────────────────────── -->
+<div class="section">
+  <div class="section-label">Empirical Calibration</div>
+  <h2>The Fathom Scale</h2>
+  <p>Calibrated from real SAE circuit attribution runs at T=0.0. Not theoretical &mdash; every score comes from measured layer activation distributions.</p>
+
+  <div class="depth-scale-visual">
+    <div class="scale-row">
+      <div class="scale-score">0.0000</div>
+      <div class="scale-bar-container">
+        <div class="scale-bar" style="width: 2%;"></div>
+        <div class="scale-label">Step-by-step arithmetic</div>
+        <div class="scale-sublabel">Completely decomposable &mdash; each step independent</div>
+      </div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-score">0.0870</div>
+      <div class="scale-bar-container">
+        <div class="scale-bar" style="width: 15%;"></div>
+        <div class="scale-label">Probability calculation</div>
+        <div class="scale-sublabel">Mostly decomposable, some dependency</div>
+      </div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-score">0.1579</div>
+      <div class="scale-bar-container">
+        <div class="scale-bar" style="width: 27%;"></div>
+        <div class="scale-label">Factual enumeration</div>
+        <div class="scale-sublabel">Theories listed independently</div>
+      </div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-score">0.3799</div>
+      <div class="scale-bar-container">
+        <div class="scale-bar" style="width: 66%;"></div>
+        <div class="scale-label">Logical integration</div>
+        <div class="scale-sublabel">Premises irreducibly linked</div>
+      </div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-score">0.3905</div>
+      <div class="scale-bar-container">
+        <div class="scale-bar" style="width: 68%;"></div>
+        <div class="scale-label">Causal synthesis</div>
+        <div class="scale-sublabel">Physics + phenomenology integrated</div>
+      </div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-score">0.4749</div>
+      <div class="scale-bar-container">
+        <div class="scale-bar" style="width: 83%;"></div>
+        <div class="scale-label">Multi-domain causal web</div>
+        <div class="scale-sublabel">Cross-domain mechanisms interdependent</div>
+      </div>
+    </div>
+    <div class="scale-row">
+      <div class="scale-score">0.5723</div>
+      <div class="scale-bar-container">
+        <div class="scale-bar" style="width: 100%;"></div>
+        <div class="scale-label">Meta-logical self-reference</div>
+        <div class="scale-sublabel">Self-referential reasoning structures</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Decomposability Law ─────────────────────────── -->
+<div class="section">
+  <div class="section-label">Core Discovery</div>
+  <h2>The Decomposability Law</h2>
+  <p>Fathom measures computational irreducibility, not accuracy or length. Two responses with identical factual content produce different scores based on whether the computation is modular or integrated.</p>
+
+  <div class="law-block">
+    <div class="law-title">The Law</div>
+    <div class="law-formula">answer = A&#8321; + A&#8322; + A&#8323; (independent parts) &rarr; depth &asymp; 0</div>
+    <div class="law-desc">Decomposable: list of facts, sequential steps, independent modules</div>
+    <div style="height: 12px;"></div>
+    <div class="law-formula">answer requires A&#8321; &times; A&#8322; &times; A&#8323; (all together) &rarr; depth &asymp; 0.4+</div>
+    <div class="law-desc">Irreducible: causal web, integrated synthesis, interdependent mechanisms</div>
+  </div>
+
+  <p>A perfectly correct algebra solution scores 0.0000 because each step is independently computable. A causal explanation of how exercise affects neurotransmitter regulation scores 0.4749 because every mechanism depends on the others. Depth measures structure, not quality.</p>
+</div>
+
+<!-- ── Stochastic Resonance ────────────────────────── -->
+<div class="section">
+  <div class="section-label">Temperature Dynamics</div>
+  <h2>Stochastic Resonance in Integration Tasks</h2>
+  <p>For computation tasks, noise always hurts. For integration tasks, moderate noise <em style="font-style:italic;color:#d0d0d0;">increases</em> depth &mdash; precisely paralleling the biological phenomenon of stochastic resonance.</p>
+
+  <div class="stat-grid">
+    <div class="stat">
+      <div class="value">T=0.0</div>
+      <div class="label">Optimal for computation</div>
+    </div>
+    <div class="stat">
+      <div class="value">T=0.3</div>
+      <div class="label">Optimal for logic</div>
+    </div>
+    <div class="stat">
+      <div class="value">T=0.5+</div>
+      <div class="label">Optimal for synthesis</div>
+    </div>
+    <div class="stat">
+      <div class="value">T&gt;1.0</div>
+      <div class="label">Depth collapse</div>
+    </div>
+  </div>
+
+  <p>This enables principled temperature selection: sweep depth across temperatures for your task type to find the optimal operating point.</p>
+</div>
+
 <!-- ── Use Cases ───────────────────────────────────── -->
 <div class="section">
-  <div class="section-label">Use Cases</div>
+  <div class="section-label">Applications</div>
   <h2>Fathom Goes Everywhere AI Thinks</h2>
 
   <div class="use-cases-grid">
@@ -429,8 +703,8 @@ body {
     </div>
     <div class="endpoint">
       <span class="method">POST</span>
-      <span class="path">/v2/filter_dataset</span>
-      <span class="desc">Training data curation</span>
+      <span class="path">/v2/temperature_sweep</span>
+      <span class="desc">Optimal temperature for task type</span>
     </div>
   </div>
 
@@ -442,7 +716,9 @@ body {
     <div><span class="dim">{</span></div>
     <div><span class="dim">  "fathom_score": </span><span class="highlight">78</span><span class="dim">,</span></div>
     <div><span class="dim">  "grade": "</span><span class="highlight">A</span><span class="dim">",</span></div>
-    <div><span class="dim">  "interpretation": "Strong distributed reasoning"</span></div>
+    <div><span class="dim">  "depth": </span><span class="highlight">0.3905</span><span class="dim">,</span></div>
+    <div><span class="dim">  "decomposability": "</span><span class="highlight">irreducible</span><span class="dim">",</span></div>
+    <div><span class="dim">  "interpretation": "Causal synthesis &mdash; integrated reasoning"</span></div>
     <div><span class="dim">}</span></div>
   </div>
 </div>
@@ -451,24 +727,28 @@ body {
 <div class="section">
   <div class="section-label">Pricing</div>
   <h2>From Free to Enterprise</h2>
-  <p>Free for researchers. $29/mo for developers. Custom for hospitals, law firms, and government agencies.</p>
+  <p>Free for researchers. Scale with your deployment.</p>
 
-  <div class="stat-grid">
-    <div class="stat">
-      <div class="value">$0</div>
-      <div class="label">Free / 100 req</div>
+  <div class="pricing-grid">
+    <div class="price-card">
+      <div class="tier">Researcher</div>
+      <div class="price">$0</div>
+      <div class="price-sub">100 req / month</div>
     </div>
-    <div class="stat">
-      <div class="value">$29</div>
-      <div class="label">Developer / 10k</div>
+    <div class="price-card featured">
+      <div class="tier">Developer</div>
+      <div class="price">$29</div>
+      <div class="price-sub">10k req / month</div>
     </div>
-    <div class="stat">
-      <div class="value">$199</div>
-      <div class="label">Pro / 100k</div>
+    <div class="price-card">
+      <div class="tier">Pro</div>
+      <div class="price">$199</div>
+      <div class="price-sub">100k req / month</div>
     </div>
-    <div class="stat">
-      <div class="value">Custom</div>
-      <div class="label">Enterprise</div>
+    <div class="price-card">
+      <div class="tier">Enterprise</div>
+      <div class="price">Custom</div>
+      <div class="price-sub">Unlimited + SLA</div>
     </div>
   </div>
 </div>
@@ -477,8 +757,9 @@ body {
 
 <!-- ── Footer ──────────────────────────────────────── -->
 <div class="footer">
-  <div>darkflobi &mdash; fathom v2.0 &mdash; 2026</div>
+  <div>darkflobi &mdash; fathom v2.0 &mdash; 2026 &mdash; patent pending</div>
   <div class="links">
+    <a href="/fathom/blog">Blog</a>
     <a href="/fathom/waitlist">Waitlist</a>
     <a href="/dashboard">Dashboard</a>
     <a href="https://github.com/darkflobi/fathom">GitHub</a>
