@@ -751,62 +751,6 @@ body {
   margin-left: auto;
 }
 
-/* ── Pricing ──────────────────────────────────── */
-.pricing-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 1px;
-  background: var(--border);
-  border: 1px solid var(--border);
-  margin: 48px 0 24px;
-}
-
-.price-card {
-  background: var(--surface);
-  padding: 36px 20px;
-  text-align: center;
-  transition: all 0.25s ease;
-}
-
-.price-card:hover { background: var(--surface-hover); }
-
-.price-tier {
-  font-family: var(--mono);
-  font-size: 10px;
-  letter-spacing: 3px;
-  color: var(--text-dim);
-  text-transform: uppercase;
-  margin-bottom: 12px;
-}
-
-.price-amount {
-  font-family: var(--mono);
-  font-size: 32px;
-  font-weight: 300;
-  color: var(--green);
-  margin-bottom: 6px;
-}
-
-.price-detail {
-  font-family: var(--mono);
-  font-size: 11px;
-  color: var(--text-dim);
-}
-
-.price-card.featured {
-  border-top: 2px solid var(--green);
-}
-
-.enterprise-note {
-  font-family: var(--body);
-  font-size: 12px;
-  color: var(--text-dim);
-  text-align: center;
-  max-width: 580px;
-  margin: 0 auto;
-  line-height: 1.7;
-}
-
 /* ── Footer ───────────────────────────────────── */
 .footer {
   border-top: 1px solid var(--border);
@@ -999,7 +943,6 @@ body {
   .final-cta .cta-row .btn { width: 260px; text-align: center; }
   .demo-layers { height: 24px; }
   .api-grid { grid-template-columns: 1fr; }
-  .pricing-grid { grid-template-columns: repeat(2, 1fr); }
   .nav-links { display: none; }
   .demo-results { grid-template-columns: 1fr; }
   .section { padding: 64px 20px; }
@@ -1011,7 +954,7 @@ body {
 
 @media (max-width: 480px) {
   .hero h1 { font-size: 32px; letter-spacing: 10px; }
-  .pricing-grid { grid-template-columns: 1fr 1fr; }
+
   .scale-row { grid-template-columns: 56px 1fr; gap: 12px; }
   .scale-score { font-size: 13px; }
 }
@@ -1432,38 +1375,6 @@ body {
   </div>
 </section>
 
-<div class="section-divider"></div>
-
-<!-- ── Pricing ──────────────────────────────────────── -->
-<section class="section reveal">
-  <div class="section-label">Pricing</div>
-  <h2>Built for Enterprise. <span class="accent">Open to Researchers.</span></h2>
-
-  <div class="pricing-grid">
-    <div class="price-card">
-      <div class="price-tier">Research</div>
-      <div class="price-amount">Free</div>
-      <div class="price-detail">500 req / month</div>
-    </div>
-    <div class="price-card">
-      <div class="price-tier">Developer</div>
-      <div class="price-amount">$299</div>
-      <div class="price-detail">50K req / month</div>
-    </div>
-    <div class="price-card featured">
-      <div class="price-tier">Pro</div>
-      <div class="price-amount">$999</div>
-      <div class="price-detail">500K req / month</div>
-    </div>
-    <div class="price-card">
-      <div class="price-tier">Enterprise</div>
-      <div class="price-amount">Custom</div>
-      <div class="price-detail">Compliance + SLA</div>
-    </div>
-  </div>
-
-  <p class="enterprise-note">Enterprise pricing for legal, medical, and government applications starts at $5,000/yr. Contact us for compliance use cases requiring custom SLAs, audit trails, and dedicated support.</p>
-</section>
 
 <!-- ── Final CTA ──────────────────────────────────── -->
 <div class="section-divider"></div>
