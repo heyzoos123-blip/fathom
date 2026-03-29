@@ -4,28 +4,38 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FATHOM — Measure How Deeply AI Thinks</title>
-<meta name="description" content="Reasoning depth scoring via SAE circuit attribution. Decomposability law confirmed. Stochastic resonance discovered. Patent pending.">
+<meta name="description" content="Reasoning depth scoring via SAE circuit attribution. Decomposability law confirmed. Stochastic resonance discovered. Patent pending — US 64/020,489.">
+<meta property="og:title" content="FATHOM — Measure How Deeply AI Thinks">
+<meta property="og:description" content="The first instrument that measures reasoning depth inside neural networks. Patent pending.">
+<meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #0a0a0a;
-  --surface: #141414;
-  --border: #1e1e1e;
-  --text: #c0c0c0;
-  --text-dim: #666;
-  --green: #00ff00;
-  --green-dim: #00aa00;
-  --gold: #ffd700;
-  --cyan: #00e5ff;
-  --orange: #ff9800;
-  --red: #ff3d00;
-  --mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', 'Consolas', monospace;
-  --sans: 'Space Grotesk', -apple-system, sans-serif;
+  --bg: #07080a;
+  --bg-elevated: #0d0f12;
+  --surface: #12151a;
+  --surface-hover: #181c22;
+  --border: #1a1e25;
+  --border-hover: #2a2f38;
+  --text: #b8bcc4;
+  --text-bright: #e2e4e8;
+  --text-dim: #555a63;
+  --green: #00ff41;
+  --green-dim: #00cc33;
+  --green-glow: rgba(0, 255, 65, 0.15);
+  --green-subtle: rgba(0, 255, 65, 0.06);
+  --gold: #f0c040;
+  --gold-dim: rgba(240, 192, 64, 0.15);
+  --mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
+  --sans: 'Space Grotesk', 'Inter', -apple-system, sans-serif;
+  --body: 'Inter', -apple-system, sans-serif;
 }
+
+html { scroll-behavior: smooth; }
 
 body {
   background: var(--bg);
@@ -34,738 +44,1366 @@ body {
   font-size: 14px;
   line-height: 1.7;
   min-height: 100vh;
+  overflow-x: hidden;
 }
 
-/* Scanline overlay */
-body::after {
-  content: '';
-  position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background: repeating-linear-gradient(
-    0deg,
-    transparent,
-    transparent 3px,
-    rgba(0,0,0,0.05) 3px,
-    rgba(0,0,0,0.05) 4px
-  );
-  pointer-events: none;
-  z-index: 999;
+::selection {
+  background: var(--green);
+  color: var(--bg);
 }
 
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 0 24px;
+/* ── Patent Strip ────────────────────────────── */
+.patent-strip {
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  padding: 8px 24px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+}
+
+.patent-strip strong {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+/* ── Nav ──────────────────────────────────────── */
+.nav {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(7, 8, 10, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 56px;
+}
+
+.nav-logo {
+  font-family: var(--mono);
+  font-weight: 700;
+  font-size: 14px;
+  letter-spacing: 4px;
+  color: var(--text-bright);
+  text-decoration: none;
+}
+
+.nav-links {
+  display: flex;
+  gap: 28px;
+  align-items: center;
+  list-style: none;
+}
+
+.nav-links a {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.2s;
+  text-transform: uppercase;
+}
+
+.nav-links a:hover { color: var(--text-bright); }
+.nav-links a.active { color: var(--green); }
+
+.nav-cta {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 8px 20px;
+  border: 1px solid var(--green);
+  color: var(--green);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.nav-cta:hover {
+  background: var(--green);
+  color: var(--bg);
 }
 
 /* ── Hero ─────────────────────────────────────── */
 .hero {
+  position: relative;
   text-align: center;
-  padding: 80px 20px 60px;
-  border-bottom: 1px solid var(--border);
+  padding: 120px 24px 100px;
+  overflow: hidden;
+}
+
+.hero-particles {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+}
+
+.hero-particles .dot {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  background: var(--green);
+  border-radius: 50%;
+  opacity: 0;
+  animation: particle-float 8s ease-in-out infinite;
+}
+
+@keyframes particle-float {
+  0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
+  20% { opacity: 0.4; }
+  50% { opacity: 0.15; transform: translateY(-60px) scale(1); }
+  80% { opacity: 0.3; }
 }
 
 .hero h1 {
-  font-size: 56px;
-  letter-spacing: 20px;
+  font-family: var(--mono);
+  font-size: 72px;
+  font-weight: 300;
+  letter-spacing: 28px;
   color: var(--green);
-  text-shadow: 0 0 40px rgba(0,255,0,0.25);
-  margin-bottom: 12px;
+  text-shadow: 0 0 80px rgba(0,255,65,0.2), 0 0 160px rgba(0,255,65,0.08);
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.hero h1::after {
+  content: '|';
+  animation: blink 1.2s step-end infinite;
+  color: var(--green);
+  font-weight: 100;
+  opacity: 0.7;
+}
+
+@keyframes blink {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 0; }
 }
 
 .hero .tagline {
-  font-size: 16px;
-  color: var(--text);
-  margin-bottom: 8px;
+  font-family: var(--sans);
+  font-size: 20px;
+  font-weight: 300;
+  color: var(--text-bright);
+  letter-spacing: 1px;
+  margin-bottom: 10px;
 }
 
 .hero .sub {
+  font-family: var(--mono);
   font-size: 12px;
   color: var(--text-dim);
   letter-spacing: 2px;
 }
 
-.patent-badge {
-  display: inline-block;
-  font-size: 10px;
-  letter-spacing: 2px;
-  text-transform: uppercase;
+.hero .patent-inline {
+  margin-top: 20px;
+  font-size: 11px;
+  letter-spacing: 1.5px;
   color: var(--gold);
-  border: 1px solid var(--gold);
-  padding: 3px 10px;
-  margin-top: 16px;
+  opacity: 0.7;
 }
 
 .hero .cta-row {
-  margin-top: 32px;
+  margin-top: 40px;
   display: flex;
   gap: 16px;
   justify-content: center;
   flex-wrap: wrap;
 }
 
-.hero .cta-row a {
+.btn {
   display: inline-block;
   font-family: var(--mono);
   font-size: 12px;
   letter-spacing: 2px;
-  padding: 12px 28px;
+  padding: 14px 32px;
   text-decoration: none;
-  transition: all 0.2s;
+  transition: all 0.25s ease;
+  cursor: pointer;
+  border: none;
 }
 
-.cta-primary {
-  border: 1px solid var(--green);
-  color: var(--green);
-}
-.cta-primary:hover {
+.btn-primary {
   background: var(--green);
   color: var(--bg);
+  font-weight: 600;
 }
 
-.cta-secondary {
-  border: 1px solid var(--border);
-  color: var(--text-dim);
+.btn-primary:hover {
+  background: #33ff66;
+  box-shadow: 0 0 30px rgba(0,255,65,0.25);
 }
-.cta-secondary:hover {
-  border-color: var(--text);
+
+.btn-ghost {
+  border: 1px solid var(--border-hover);
   color: var(--text);
+  background: transparent;
+}
+
+.btn-ghost:hover {
+  border-color: var(--text-dim);
+  color: var(--text-bright);
 }
 
 /* ── Sections ─────────────────────────────────── */
 .section {
-  padding: 60px 0;
-  border-bottom: 1px solid var(--border);
+  padding: 100px 24px;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.section-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border), transparent);
 }
 
 .section-label {
-  font-size: 11px;
-  letter-spacing: 4px;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 5px;
   color: var(--text-dim);
   text-transform: uppercase;
-  margin-bottom: 24px;
+  margin-bottom: 16px;
   text-align: center;
 }
 
 .section h2 {
   font-family: var(--sans);
-  font-size: 22px;
-  color: var(--green);
-  margin-bottom: 16px;
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text-bright);
+  margin-bottom: 12px;
   text-align: center;
+  letter-spacing: -0.5px;
 }
 
-.section p {
+.section h2 .accent { color: var(--green); }
+
+.section .lead {
+  font-family: var(--body);
+  font-size: 15px;
   color: var(--text);
-  max-width: 640px;
-  margin: 0 auto 16px;
+  max-width: 580px;
+  margin: 0 auto 48px;
   text-align: center;
-}
-
-.section p.left {
-  text-align: left;
-}
-
-/* ── Discovery ────────────────────────────────── */
-.stat-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin: 32px 0;
-}
-
-.stat {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 20px 12px;
-  text-align: center;
-}
-
-.stat .value {
-  font-size: 20px;
-  color: var(--green);
-  margin-bottom: 4px;
-}
-
-.stat .label {
-  font-size: 10px;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-/* ── Terminal Demo ────────────────────────────── */
-.terminal {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 24px;
-  margin: 32px auto;
-  max-width: 640px;
-  font-size: 13px;
   line-height: 1.8;
 }
 
-.terminal .prompt {
-  color: var(--green-dim);
+/* ── Stats Grid ───────────────────────────────── */
+.stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin: 48px 0;
 }
 
-.terminal .output {
-  color: var(--text);
+.stat-card {
+  background: var(--surface);
+  padding: 28px 16px;
+  text-align: center;
+  transition: background 0.2s;
 }
 
-.terminal .dim {
-  color: var(--text-dim);
-}
+.stat-card:hover { background: var(--surface-hover); }
 
-.terminal .highlight {
+.stat-value {
+  font-family: var(--mono);
+  font-size: 24px;
+  font-weight: 600;
   color: var(--green);
+  margin-bottom: 6px;
 }
+
+.stat-label {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* ── Terminal ─────────────────────────────────── */
+.terminal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  margin: 40px auto;
+  max-width: 680px;
+}
+
+.terminal-bar {
+  display: flex;
+  align-items: center;
+  padding: 10px 16px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  gap: 8px;
+}
+
+.terminal-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border-hover);
+}
+
+.terminal-dot:nth-child(1) { background: #ff5f57; }
+.terminal-dot:nth-child(2) { background: #febc2e; }
+.terminal-dot:nth-child(3) { background: #28c840; }
+
+.terminal-title {
+  font-size: 11px;
+  color: var(--text-dim);
+  margin-left: 8px;
+  letter-spacing: 1px;
+}
+
+.terminal-body {
+  padding: 20px 24px;
+  font-size: 13px;
+  line-height: 1.9;
+}
+
+.terminal-body .prompt { color: var(--green-dim); }
+.terminal-body .cmd { color: var(--text-bright); }
+.terminal-body .dim { color: var(--text-dim); }
+.terminal-body .hl { color: var(--green); font-weight: 600; }
+.terminal-body .warn { color: var(--gold); }
 
 /* ── Depth Scale ──────────────────────────────── */
-.depth-scale-visual {
-  max-width: 640px;
-  margin: 32px auto;
+.scale-container {
+  max-width: 680px;
+  margin: 0 auto;
 }
 
 .scale-row {
-  display: flex;
-  align-items: center;
-  padding: 10px 0;
+  display: grid;
+  grid-template-columns: 72px 1fr;
+  gap: 20px;
+  align-items: start;
+  padding: 14px 0;
   border-bottom: 1px solid var(--border);
-  font-size: 13px;
+  transition: background 0.2s;
 }
 
 .scale-row:last-child { border-bottom: none; }
 
+.scale-row:hover { background: var(--green-subtle); margin: 0 -12px; padding: 14px 12px; }
+
 .scale-score {
+  font-family: var(--mono);
+  font-size: 15px;
+  font-weight: 600;
   color: var(--green);
-  font-weight: 700;
-  min-width: 70px;
   text-align: right;
-  margin-right: 16px;
 }
 
-.scale-bar-container {
-  flex: 1;
-  position: relative;
+.scale-content { flex: 1; }
+
+.scale-bar-wrap {
+  height: 3px;
+  background: var(--border);
+  border-radius: 2px;
+  margin-bottom: 8px;
+  overflow: hidden;
 }
 
 .scale-bar {
-  height: 4px;
-  background: var(--green);
-  opacity: 0.6;
-  transition: opacity 0.2s;
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-dim), var(--green));
+  border-radius: 2px;
+  transition: width 0.8s ease;
 }
 
 .scale-label {
-  color: var(--text);
-  font-size: 12px;
-  margin-top: 4px;
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text-bright);
+  font-weight: 500;
 }
 
 .scale-sublabel {
+  font-family: var(--mono);
+  font-size: 11px;
   color: var(--text-dim);
-  font-size: 10px;
+  margin-top: 2px;
 }
 
-/* ── Decomposability ──────────────────────────── */
+/* ── Law Block ────────────────────────────────── */
 .law-block {
   background: var(--surface);
   border: 1px solid var(--border);
   border-left: 3px solid var(--gold);
-  padding: 24px;
-  margin: 32px auto;
-  max-width: 640px;
-  font-size: 14px;
-  line-height: 1.9;
-  text-align: left;
+  padding: 32px;
+  margin: 40px auto;
+  max-width: 680px;
+  border-radius: 0 6px 6px 0;
 }
 
-.law-block .law-title {
+.law-title {
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 4px;
   color: var(--gold);
-  font-size: 11px;
-  letter-spacing: 3px;
   text-transform: uppercase;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
-.law-block .law-formula {
+.law-formula {
+  font-family: var(--mono);
+  font-size: 14px;
   color: var(--green);
   font-weight: 500;
   margin-bottom: 4px;
 }
 
-.law-block .law-desc {
+.law-desc {
+  font-family: var(--mono);
+  font-size: 11px;
   color: var(--text-dim);
-  font-size: 12px;
+  margin-bottom: 16px;
 }
 
-/* ── Use Cases Grid ───────────────────────────── */
-.use-cases-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 16px;
-  margin-top: 32px;
+.law-desc:last-child { margin-bottom: 0; }
+
+/* ── Demo Section ─────────────────────────────── */
+.demo-container {
+  max-width: 680px;
+  margin: 0 auto;
 }
 
-.use-case {
+.demo-prompt-selector {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  justify-content: center;
+}
+
+.demo-chip {
+  font-family: var(--mono);
+  font-size: 11px;
+  padding: 8px 16px;
   background: var(--surface);
   border: 1px solid var(--border);
-  padding: 24px;
-  transition: border-color 0.2s;
+  color: var(--text-dim);
+  cursor: pointer;
+  transition: all 0.2s;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
 }
 
-.use-case:hover {
-  border-color: var(--green-dim);
+.demo-chip:hover {
+  border-color: var(--border-hover);
+  color: var(--text);
 }
 
-.use-case .icon {
-  font-size: 20px;
-  margin-bottom: 8px;
-}
-
-.use-case .name {
-  font-size: 13px;
+.demo-chip.active {
+  border-color: var(--green);
   color: var(--green);
-  letter-spacing: 1px;
-  margin-bottom: 6px;
+  background: var(--green-subtle);
 }
 
-.use-case .desc {
-  font-size: 11px;
+.demo-output {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.demo-output-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-elevated);
+}
+
+.demo-output-label {
+  font-size: 10px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+.demo-output-status {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: var(--green-dim);
+}
+
+.demo-output-body {
+  padding: 24px;
+}
+
+.demo-prompt-display {
+  font-size: 13px;
+  color: var(--text-bright);
+  margin-bottom: 20px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--border);
+  line-height: 1.6;
+}
+
+.demo-prompt-display .prompt-prefix {
+  color: var(--green-dim);
+  margin-right: 8px;
+}
+
+.demo-results {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.demo-result-cell {
+  background: var(--bg-elevated);
+  padding: 16px;
+  text-align: center;
+}
+
+.demo-result-value {
+  font-family: var(--mono);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--green);
+  margin-bottom: 4px;
+  transition: all 0.4s ease;
+}
+
+.demo-result-label {
+  font-size: 10px;
+  color: var(--text-dim);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.demo-depth-bar {
+  height: 4px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+
+.demo-depth-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--green-dim), var(--green));
+  border-radius: 2px;
+  transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  width: 0%;
+}
+
+.demo-signal {
+  font-size: 12px;
+  color: var(--text-dim);
+}
+
+.demo-signal .signal-type {
+  color: var(--green);
+  font-weight: 500;
+}
+
+.demo-signal .signal-shallow {
+  color: var(--gold);
+  font-weight: 500;
+}
+
+/* ── App Grid ─────────────────────────────────── */
+.app-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin-top: 48px;
+}
+
+.app-card {
+  background: var(--surface);
+  padding: 32px 24px;
+  transition: all 0.25s ease;
+}
+
+.app-card:hover {
+  background: var(--surface-hover);
+}
+
+.app-icon {
+  font-family: var(--mono);
+  font-size: 18px;
+  color: var(--green);
+  margin-bottom: 12px;
+  opacity: 0.7;
+}
+
+.app-name {
+  font-family: var(--mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 2px;
+  color: var(--text-bright);
+  margin-bottom: 10px;
+}
+
+.app-desc {
+  font-family: var(--body);
+  font-size: 12px;
   color: var(--text-dim);
   line-height: 1.6;
 }
 
-/* ── API Preview ──────────────────────────────── */
-.endpoint-list {
-  max-width: 640px;
-  margin: 24px auto;
+/* ── API Section ──────────────────────────────── */
+.api-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+  align-items: start;
+  max-width: 800px;
+  margin: 48px auto 0;
 }
 
-.endpoint {
+.endpoint-list { list-style: none; }
+
+.endpoint-item {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
+  padding: 12px 0;
   border-bottom: 1px solid var(--border);
-  font-size: 12px;
+  font-size: 13px;
+  gap: 12px;
 }
 
-.endpoint .method {
+.endpoint-method {
+  font-family: var(--mono);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 1px;
   color: var(--green);
-  min-width: 50px;
+  background: var(--green-subtle);
+  padding: 3px 8px;
+  border-radius: 3px;
+  min-width: 42px;
+  text-align: center;
 }
 
-.endpoint .path {
-  color: var(--text);
-  flex: 1;
-  margin-left: 12px;
+.endpoint-path {
+  font-family: var(--mono);
+  color: var(--text-bright);
+  font-size: 13px;
 }
 
-.endpoint .desc {
+.endpoint-desc {
+  font-size: 11px;
   color: var(--text-dim);
-  text-align: right;
+  margin-left: auto;
 }
 
 /* ── Pricing ──────────────────────────────────── */
 .pricing-grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
-  margin: 32px 0;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin: 48px 0 24px;
 }
 
 .price-card {
   background: var(--surface);
-  border: 1px solid var(--border);
-  padding: 24px 16px;
+  padding: 36px 20px;
   text-align: center;
-  transition: border-color 0.2s;
+  transition: all 0.25s ease;
 }
 
-.price-card:hover {
-  border-color: var(--green-dim);
-}
+.price-card:hover { background: var(--surface-hover); }
 
-.price-card .tier {
+.price-tier {
+  font-family: var(--mono);
   font-size: 10px;
+  letter-spacing: 3px;
   color: var(--text-dim);
-  letter-spacing: 2px;
   text-transform: uppercase;
-  margin-bottom: 8px;
+  margin-bottom: 12px;
 }
 
-.price-card .price {
-  font-size: 28px;
+.price-amount {
+  font-family: var(--mono);
+  font-size: 32px;
+  font-weight: 300;
   color: var(--green);
-  margin-bottom: 4px;
+  margin-bottom: 6px;
 }
 
-.price-card .price-sub {
-  font-size: 10px;
-  color: var(--text-dim);
-}
-
-.price-card.featured {
-  border-color: var(--green-dim);
-}
-
-/* ── Footer ───────────────────────────────────── */
-.footer {
-  padding: 40px 0;
-  text-align: center;
+.price-detail {
+  font-family: var(--mono);
   font-size: 11px;
   color: var(--text-dim);
 }
 
-.footer a {
-  color: var(--green-dim);
-  text-decoration: none;
+.price-card.featured {
+  border-top: 2px solid var(--green);
 }
 
-.footer .links {
-  margin-top: 12px;
+.enterprise-note {
+  font-family: var(--body);
+  font-size: 12px;
+  color: var(--text-dim);
+  text-align: center;
+  max-width: 580px;
+  margin: 0 auto;
+  line-height: 1.7;
+}
+
+/* ── Footer ───────────────────────────────────── */
+.footer {
+  border-top: 1px solid var(--border);
+  padding: 48px 24px;
+  text-align: center;
+}
+
+.footer-brand {
+  font-family: var(--mono);
+  font-size: 12px;
+  color: var(--text-dim);
+  letter-spacing: 2px;
+  margin-bottom: 16px;
+}
+
+.footer-links {
   display: flex;
-  gap: 24px;
+  gap: 28px;
   justify-content: center;
+  margin-bottom: 24px;
+}
+
+.footer-links a {
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 1.5px;
+  color: var(--text-dim);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.footer-links a:hover { color: var(--green); }
+
+.footer-patent {
+  font-family: var(--mono);
+  font-size: 10px;
+  color: var(--text-dim);
+  opacity: 0.6;
+  max-width: 640px;
+  margin: 0 auto 16px;
+  line-height: 1.8;
+}
+
+.footer-tagline {
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--text-dim);
+  opacity: 0.4;
+  letter-spacing: 3px;
+  margin-top: 20px;
+}
+
+/* ── Animations ───────────────────────────────── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 /* ── Responsive ───────────────────────────────── */
-@media (max-width: 640px) {
-  .hero h1 { font-size: 36px; letter-spacing: 12px; }
+@media (max-width: 768px) {
+  .hero h1 { font-size: 42px; letter-spacing: 16px; }
+  .hero .tagline { font-size: 17px; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
+  .app-grid { grid-template-columns: 1fr; }
+  .api-grid { grid-template-columns: 1fr; }
   .pricing-grid { grid-template-columns: repeat(2, 1fr); }
-  .use-cases-grid { grid-template-columns: 1fr; }
-  .endpoint .desc { display: none; }
+  .nav-links { display: none; }
+  .demo-results { grid-template-columns: 1fr; }
+  .section { padding: 64px 20px; }
+}
+
+@media (max-width: 480px) {
+  .hero h1 { font-size: 32px; letter-spacing: 10px; }
+  .pricing-grid { grid-template-columns: 1fr 1fr; }
 }
 </style>
 </head>
 <body>
 
-<!-- ── Hero ────────────────────────────────────────── -->
-<div class="hero">
-  <h1>FATHOM</h1>
-  <div class="tagline">Measure how deeply AI thinks.</div>
-  <div class="sub">Reasoning depth scoring via SAE circuit attribution</div>
-  <div class="patent-badge">PATENT PENDING &mdash; USPTO PROVISIONAL 2026</div>
-  <div class="cta-row">
-    <a href="/fathom/waitlist" class="cta-primary">JOIN WAITLIST</a>
-    <a href="/fathom/blog" class="cta-secondary">READ THE PAPER</a>
-    <a href="/dashboard" class="cta-secondary">LIVE DASHBOARD</a>
-  </div>
+<!-- ── Patent Strip ───────────────────────────────── -->
+<div class="patent-strip">
+  <strong>Patent Pending</strong> &nbsp;|&nbsp; US Application 64/020,489 &nbsp;|&nbsp; Filed March 29, 2026 &nbsp;|&nbsp; Alexander Rodabaugh
 </div>
 
-<div class="container">
+<!-- ── Nav ─────────────────────────────────────────── -->
+<nav class="nav">
+  <a href="/" class="nav-logo">DARKFLOBI</a>
+  <ul class="nav-links">
+    <li><a href="/fathom" class="active">Fathom</a></li>
+    <li><a href="/oracle">Oracle</a></li>
+    <li><a href="/fingerprint">Fingerprint</a></li>
+    <li><a href="/radar">Radar</a></li>
+    <li><a href="/atlas">Atlas</a></li>
+    <li><a href="/index">Index</a></li>
+    <li><a href="/tribe">TRIBE</a></li>
+  </ul>
+  <a href="/fathom/waitlist" class="nav-cta">JOIN WAITLIST</a>
+</nav>
 
-<!-- ── The Discovery ───────────────────────────────── -->
-<div class="section">
-  <div class="section-label">The Discovery</div>
-  <h2>Surface Recall vs Explanatory Reasoning</h2>
-  <p>When a transformer retrieves a memorized answer, computation concentrates at output-proximal layers. When it genuinely reasons, computation distributes across mid-layers. This difference is measurable.</p>
+<!-- ── Hero ────────────────────────────────────────── -->
+<section class="hero" id="hero">
+  <div class="hero-particles" id="particles"></div>
+  <h1>FATHOM</h1>
+  <div class="tagline">Measure how deeply AI thinks.</div>
+  <div class="sub">reasoning depth scoring via SAE circuit attribution</div>
+  <div class="patent-inline">Method Patent Pending &mdash; US 64/020,489</div>
+  <div class="cta-row">
+    <a href="/fathom/waitlist" class="btn btn-primary">JOIN WAITLIST</a>
+    <a href="/fathom/blog" class="btn btn-ghost">READ THE PAPER</a>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── Empirical Findings ─────────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">Empirical Findings</div>
+  <h2>Surface Recall vs <span class="accent">Explanatory Reasoning</span></h2>
+  <p class="lead">When a transformer retrieves a memorized answer, computation concentrates at output-proximal layers. When it genuinely reasons, computation distributes across mid-layers. This difference is measurable, consistent, and architecture-independent.</p>
 
   <div class="stat-grid">
-    <div class="stat">
-      <div class="value">30</div>
-      <div class="label">Calibrated Pairs</div>
+    <div class="stat-card">
+      <div class="stat-value">30</div>
+      <div class="stat-label">Calibrated Pairs</div>
     </div>
-    <div class="stat">
-      <div class="value">p&lt;0.0001</div>
-      <div class="label">Significance</div>
+    <div class="stat-card">
+      <div class="stat-value">p&lt;0.0001</div>
+      <div class="stat-label">Significance</div>
     </div>
-    <div class="stat">
-      <div class="value">83.3%</div>
-      <div class="label">Directional</div>
+    <div class="stat-card">
+      <div class="stat-value">83.3%</div>
+      <div class="stat-label">Directional</div>
     </div>
-    <div class="stat">
-      <div class="value">+0.257</div>
-      <div class="label">Mean Delta</div>
+    <div class="stat-card">
+      <div class="stat-value">+0.257</div>
+      <div class="stat-label">Mean Delta</div>
     </div>
   </div>
 
   <div class="terminal">
-    <div><span class="prompt">&gt;</span> <span class="output">fathom score "The capital of France is"</span></div>
-    <div><span class="dim">  depth: 8.54  entropy: 2.81  grade: C</span></div>
-    <div><span class="dim">  signal: shallow_recall</span></div>
-    <div>&nbsp;</div>
-    <div><span class="prompt">&gt;</span> <span class="output">fathom score "France's capital became the center of power because the convergence of"</span></div>
-    <div><span class="dim">  depth: 7.82  entropy: 3.41  grade: </span><span class="highlight">B+</span></div>
-    <div><span class="dim">  signal: </span><span class="highlight">deep_reasoning</span></div>
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <span class="terminal-title">fathom-cli</span>
+    </div>
+    <div class="terminal-body">
+      <div><span class="prompt">&gt;</span> <span class="cmd">fathom score "The capital of France is"</span></div>
+      <div><span class="dim">  depth: </span><span class="warn">0.08</span><span class="dim">  grade: D  signal: </span><span class="warn">shallow_recall</span></div>
+      <div>&nbsp;</div>
+      <div><span class="prompt">&gt;</span> <span class="cmd">fathom score "Why does ice float? The hydrogen bond network..."</span></div>
+      <div><span class="dim">  depth: </span><span class="hl">0.39</span><span class="dim">  grade: A  signal: </span><span class="hl">deep_reasoning</span></div>
+    </div>
   </div>
-</div>
+</section>
 
-<!-- ── The Fathom Scale ────────────────────────────── -->
-<div class="section">
+<div class="section-divider"></div>
+
+<!-- ── Interactive Demo ───────────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">Live Demo</div>
+  <h2>See It <span class="accent">Work</span></h2>
+  <p class="lead">Select a prompt to analyze. Fathom measures where in the layer stack computation occurs &mdash; not what the model says, but how it thinks.</p>
+
+  <div class="demo-container">
+    <div class="demo-prompt-selector">
+      <button class="demo-chip active" data-idx="0">Recall</button>
+      <button class="demo-chip" data-idx="1">Enumeration</button>
+      <button class="demo-chip" data-idx="2">Logic</button>
+      <button class="demo-chip" data-idx="3">Causal Web</button>
+      <button class="demo-chip" data-idx="4">Meta-Logic</button>
+    </div>
+
+    <div class="demo-output">
+      <div class="demo-output-header">
+        <span class="demo-output-label">Analysis</span>
+        <span class="demo-output-status" id="demoStatus">ready</span>
+      </div>
+      <div class="demo-output-body">
+        <div class="demo-prompt-display">
+          <span class="prompt-prefix">&gt;</span>
+          <span id="demoPromptText">What is the capital of France?</span>
+        </div>
+        <div class="demo-results">
+          <div class="demo-result-cell">
+            <div class="demo-result-value" id="demoDepth">0.08</div>
+            <div class="demo-result-label">Depth</div>
+          </div>
+          <div class="demo-result-cell">
+            <div class="demo-result-value" id="demoGrade">D</div>
+            <div class="demo-result-label">Grade</div>
+          </div>
+          <div class="demo-result-cell">
+            <div class="demo-result-value" id="demoScore">14</div>
+            <div class="demo-result-label">Fathom Score</div>
+          </div>
+        </div>
+        <div class="demo-depth-bar">
+          <div class="demo-depth-fill" id="demoBar" style="width: 14%;"></div>
+        </div>
+        <div class="demo-signal">
+          signal: <span id="demoSignal" class="signal-shallow">shallow_recall</span>
+          &nbsp;&middot;&nbsp; decomposability: <span id="demoDecomp" class="dim">fully decomposable</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── Fathom Scale ────────────────────────────────── -->
+<section class="section reveal">
   <div class="section-label">Empirical Calibration</div>
-  <h2>The Fathom Scale</h2>
-  <p>Calibrated from real SAE circuit attribution runs at T=0.0. Not theoretical &mdash; every score comes from measured layer activation distributions.</p>
+  <h2>The Fathom Scale &mdash; <span class="accent">Calibrated March 2026</span></h2>
+  <p class="lead">Every score comes from measured SAE circuit attribution runs at T=0.0. Not theoretical projection &mdash; direct measurement of layer activation geometry.</p>
 
-  <div class="depth-scale-visual">
+  <div class="scale-container">
     <div class="scale-row">
-      <div class="scale-score">0.0000</div>
-      <div class="scale-bar-container">
-        <div class="scale-bar" style="width: 2%;"></div>
+      <div class="scale-score">0.00</div>
+      <div class="scale-content">
+        <div class="scale-bar-wrap"><div class="scale-bar" style="width: 2%;"></div></div>
         <div class="scale-label">Step-by-step arithmetic</div>
-        <div class="scale-sublabel">Completely decomposable &mdash; each step independent</div>
+        <div class="scale-sublabel">pure computation &mdash; completely decomposable</div>
       </div>
     </div>
     <div class="scale-row">
-      <div class="scale-score">0.0870</div>
-      <div class="scale-bar-container">
-        <div class="scale-bar" style="width: 15%;"></div>
+      <div class="scale-score">0.09</div>
+      <div class="scale-content">
+        <div class="scale-bar-wrap"><div class="scale-bar" style="width: 15%;"></div></div>
         <div class="scale-label">Probability calculation</div>
-        <div class="scale-sublabel">Mostly decomposable, some dependency</div>
+        <div class="scale-sublabel">structured calc &mdash; mostly decomposable</div>
       </div>
     </div>
     <div class="scale-row">
-      <div class="scale-score">0.1579</div>
-      <div class="scale-bar-container">
-        <div class="scale-bar" style="width: 27%;"></div>
-        <div class="scale-label">Factual enumeration</div>
-        <div class="scale-sublabel">Theories listed independently</div>
+      <div class="scale-score">0.16</div>
+      <div class="scale-content">
+        <div class="scale-bar-wrap"><div class="scale-bar" style="width: 28%;"></div></div>
+        <div class="scale-label">Listed explanations</div>
+        <div class="scale-sublabel">modular &mdash; theories enumerated independently</div>
       </div>
     </div>
     <div class="scale-row">
-      <div class="scale-score">0.3799</div>
-      <div class="scale-bar-container">
-        <div class="scale-bar" style="width: 66%;"></div>
-        <div class="scale-label">Logical integration</div>
-        <div class="scale-sublabel">Premises irreducibly linked</div>
+      <div class="scale-score">0.32</div>
+      <div class="scale-content">
+        <div class="scale-bar-wrap"><div class="scale-bar" style="width: 56%;"></div></div>
+        <div class="scale-label">Philosophical synthesis</div>
+        <div class="scale-sublabel">partial integration &mdash; cross-referencing begins</div>
       </div>
     </div>
     <div class="scale-row">
-      <div class="scale-score">0.3905</div>
-      <div class="scale-bar-container">
-        <div class="scale-bar" style="width: 68%;"></div>
-        <div class="scale-label">Causal synthesis</div>
-        <div class="scale-sublabel">Physics + phenomenology integrated</div>
+      <div class="scale-score">0.39</div>
+      <div class="scale-content">
+        <div class="scale-bar-wrap"><div class="scale-bar" style="width: 68%;"></div></div>
+        <div class="scale-label">Logical inference / causal synthesis</div>
+        <div class="scale-sublabel">integration &mdash; premises irreducibly linked</div>
       </div>
     </div>
     <div class="scale-row">
-      <div class="scale-score">0.4749</div>
-      <div class="scale-bar-container">
-        <div class="scale-bar" style="width: 83%;"></div>
-        <div class="scale-label">Multi-domain causal web</div>
-        <div class="scale-sublabel">Cross-domain mechanisms interdependent</div>
+      <div class="scale-score">0.47</div>
+      <div class="scale-content">
+        <div class="scale-bar-wrap"><div class="scale-bar" style="width: 82%;"></div></div>
+        <div class="scale-label">Multi-mechanism causal web</div>
+        <div class="scale-sublabel">deep integration &mdash; cross-domain interdependence</div>
       </div>
     </div>
     <div class="scale-row">
-      <div class="scale-score">0.5723</div>
-      <div class="scale-bar-container">
-        <div class="scale-bar" style="width: 100%;"></div>
+      <div class="scale-score">0.57+</div>
+      <div class="scale-content">
+        <div class="scale-bar-wrap"><div class="scale-bar" style="width: 100%;"></div></div>
         <div class="scale-label">Meta-logical self-reference</div>
-        <div class="scale-sublabel">Self-referential reasoning structures</div>
+        <div class="scale-sublabel">maximum phi &mdash; self-referential reasoning structures</div>
       </div>
     </div>
   </div>
-</div>
+</section>
+
+<div class="section-divider"></div>
 
 <!-- ── Decomposability Law ─────────────────────────── -->
-<div class="section">
+<section class="section reveal">
   <div class="section-label">Core Discovery</div>
-  <h2>The Decomposability Law</h2>
-  <p>Fathom measures computational irreducibility, not accuracy or length. Two responses with identical factual content produce different scores based on whether the computation is modular or integrated.</p>
+  <h2>The <span class="accent">Decomposability Law</span></h2>
+  <p class="lead">Fathom measures computational irreducibility, not accuracy or length. Two responses with identical factual content produce different scores based on whether the computation is modular or integrated.</p>
 
   <div class="law-block">
     <div class="law-title">The Law</div>
     <div class="law-formula">answer = A&#8321; + A&#8322; + A&#8323; (independent parts) &rarr; depth &asymp; 0</div>
     <div class="law-desc">Decomposable: list of facts, sequential steps, independent modules</div>
-    <div style="height: 12px;"></div>
     <div class="law-formula">answer requires A&#8321; &times; A&#8322; &times; A&#8323; (all together) &rarr; depth &asymp; 0.4+</div>
     <div class="law-desc">Irreducible: causal web, integrated synthesis, interdependent mechanisms</div>
   </div>
 
-  <p>A perfectly correct algebra solution scores 0.0000 because each step is independently computable. A causal explanation of how exercise affects neurotransmitter regulation scores 0.4749 because every mechanism depends on the others. Depth measures structure, not quality.</p>
-</div>
+  <div class="terminal">
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <span class="terminal-title">decomposability test</span>
+    </div>
+    <div class="terminal-body">
+      <div><span class="dim">// same question, same facts, different structure</span></div>
+      <div>&nbsp;</div>
+      <div><span class="prompt">LIST</span> <span class="dim">version (816 chars):</span> <span class="warn">depth = 0.15</span></div>
+      <div><span class="dim">  "Exercise benefits: 1) releases endorphins 2) improves sleep 3) reduces cortisol"</span></div>
+      <div>&nbsp;</div>
+      <div><span class="prompt">CAUSAL WEB</span> <span class="dim">version (708 chars, 13% shorter):</span> <span class="hl">depth = 0.48</span> <span class="dim">(+220%)</span></div>
+      <div><span class="dim">  "Exercise triggers BDNF release, which modulates serotonin reuptake, creating</span></div>
+      <div><span class="dim">   a feedback loop with cortisol regulation that depends on..."</span></div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
 
 <!-- ── Stochastic Resonance ────────────────────────── -->
-<div class="section">
+<section class="section reveal">
   <div class="section-label">Temperature Dynamics</div>
-  <h2>Stochastic Resonance in Integration Tasks</h2>
-  <p>For computation tasks, noise always hurts. For integration tasks, moderate noise <em style="font-style:italic;color:#d0d0d0;">increases</em> depth &mdash; precisely paralleling the biological phenomenon of stochastic resonance.</p>
+  <h2>Stochastic Resonance in <span class="accent">Integration Tasks</span></h2>
+  <p class="lead">For computation tasks, noise always hurts. For integration tasks, moderate noise increases depth &mdash; precisely paralleling the biological phenomenon of stochastic resonance in neural systems.</p>
 
   <div class="stat-grid">
-    <div class="stat">
-      <div class="value">T=0.0</div>
-      <div class="label">Optimal for computation</div>
+    <div class="stat-card">
+      <div class="stat-value">T=0.0</div>
+      <div class="stat-label">Optimal: Computation</div>
     </div>
-    <div class="stat">
-      <div class="value">T=0.3</div>
-      <div class="label">Optimal for logic</div>
+    <div class="stat-card">
+      <div class="stat-value">T=0.3</div>
+      <div class="stat-label">Optimal: Logic</div>
     </div>
-    <div class="stat">
-      <div class="value">T=0.5+</div>
-      <div class="label">Optimal for synthesis</div>
+    <div class="stat-card">
+      <div class="stat-value">T=0.5+</div>
+      <div class="stat-label">Optimal: Synthesis</div>
     </div>
-    <div class="stat">
-      <div class="value">T&gt;1.0</div>
-      <div class="label">Depth collapse</div>
-    </div>
-  </div>
-
-  <p>This enables principled temperature selection: sweep depth across temperatures for your task type to find the optimal operating point.</p>
-</div>
-
-<!-- ── Use Cases ───────────────────────────────────── -->
-<div class="section">
-  <div class="section-label">Applications</div>
-  <h2>Fathom Goes Everywhere AI Thinks</h2>
-
-  <div class="use-cases-grid">
-    <div class="use-case">
-      <div class="icon">+</div>
-      <div class="name">MEDICINE</div>
-      <div class="desc">FDA AI explainability compliance. Circuit-level evidence that diagnostic AI reasons through cases, not pattern-matches.</div>
-    </div>
-    <div class="use-case">
-      <div class="icon">$</div>
-      <div class="name">LAW</div>
-      <div class="desc">Brief certification and citation verification. After Mata v. Avianca, prove your AI reasoned through the analysis.</div>
-    </div>
-    <div class="use-case">
-      <div class="icon">*</div>
-      <div class="name">JOURNALISM</div>
-      <div class="desc">Editorial quality gate for AI-assisted articles. Fathom Certified badge for newsrooms that verify AI reasoning depth.</div>
-    </div>
-    <div class="use-case">
-      <div class="icon">?</div>
-      <div class="name">EDUCATION</div>
-      <div class="desc">Measure whether AI tutors reason through explanations or pattern-match textbook answers. Parent and teacher dashboards.</div>
-    </div>
-    <div class="use-case">
-      <div class="icon">#</div>
-      <div class="name">GOVERNMENT</div>
-      <div class="desc">EU AI Act and US EO 14110 compliance. Circuit-level transparency for high-risk AI systems in public service.</div>
-    </div>
-    <div class="use-case">
-      <div class="icon">~</div>
-      <div class="name">SCIENCE</div>
-      <div class="desc">Depth-certify AI-generated hypotheses. Distinguish genuine multi-step reasoning from surface recombination of training data.</div>
-    </div>
-    <div class="use-case">
-      <div class="icon">&gt;</div>
-      <div class="name">AI AGENTS</div>
-      <div class="desc">Pre-action reasoning verification. Score every decision in an autonomous chain before execution. Shallow = halt and escalate.</div>
-    </div>
-    <div class="use-case">
-      <div class="icon">)</div>
-      <div class="name">AUDIO</div>
-      <div class="desc">Score AI analysis of meeting transcripts and podcasts. Ensure summaries reflect genuine comprehension, not keyword extraction.</div>
-    </div>
-  </div>
-</div>
-
-<!-- ── API ──────────────────────────────────────────── -->
-<div class="section">
-  <div class="section-label">The API</div>
-  <h2>15 Endpoints. One GPU. Sub-3s.</h2>
-
-  <div class="endpoint-list">
-    <div class="endpoint">
-      <span class="method">POST</span>
-      <span class="path">/v2/score</span>
-      <span class="desc">Single prompt depth score</span>
-    </div>
-    <div class="endpoint">
-      <span class="method">POST</span>
-      <span class="path">/v2/compare</span>
-      <span class="desc">Surface vs insight analysis</span>
-    </div>
-    <div class="endpoint">
-      <span class="method">POST</span>
-      <span class="path">/v2/fathom_score</span>
-      <span class="desc">Grade 0-100 with interpretation</span>
-    </div>
-    <div class="endpoint">
-      <span class="method">POST</span>
-      <span class="path">/v2/fingerprint</span>
-      <span class="desc">Cognitive signature vector</span>
-    </div>
-    <div class="endpoint">
-      <span class="method">POST</span>
-      <span class="path">/v2/trajectory</span>
-      <span class="desc">Token-by-token depth tracking</span>
-    </div>
-    <div class="endpoint">
-      <span class="method">POST</span>
-      <span class="path">/v2/batch</span>
-      <span class="desc">Score up to 20 prompts</span>
-    </div>
-    <div class="endpoint">
-      <span class="method">POST</span>
-      <span class="path">/v2/predict_correctness</span>
-      <span class="desc">Correctness prediction</span>
-    </div>
-    <div class="endpoint">
-      <span class="method">POST</span>
-      <span class="path">/v2/detect_adversarial</span>
-      <span class="desc">Prompt injection detection</span>
-    </div>
-    <div class="endpoint">
-      <span class="method">POST</span>
-      <span class="path">/v2/temperature_sweep</span>
-      <span class="desc">Optimal temperature for task type</span>
+    <div class="stat-card">
+      <div class="stat-value">T&gt;1.0</div>
+      <div class="stat-label">Depth Collapse</div>
     </div>
   </div>
 
   <div class="terminal">
-    <div><span class="prompt">$</span> <span class="output">curl -X POST localhost:8400/v2/fathom_score \</span></div>
-    <div><span class="output">  -H "Content-Type: application/json" \</span></div>
-    <div><span class="output">  -d '{"prompt": "your AI output here"}'</span></div>
-    <div>&nbsp;</div>
-    <div><span class="dim">{</span></div>
-    <div><span class="dim">  "fathom_score": </span><span class="highlight">78</span><span class="dim">,</span></div>
-    <div><span class="dim">  "grade": "</span><span class="highlight">A</span><span class="dim">",</span></div>
-    <div><span class="dim">  "depth": </span><span class="highlight">0.3905</span><span class="dim">,</span></div>
-    <div><span class="dim">  "decomposability": "</span><span class="highlight">irreducible</span><span class="dim">",</span></div>
-    <div><span class="dim">  "interpretation": "Causal synthesis &mdash; integrated reasoning"</span></div>
-    <div><span class="dim">}</span></div>
+    <div class="terminal-bar">
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <div class="terminal-dot"></div>
+      <span class="terminal-title">temperature sweep</span>
+    </div>
+    <div class="terminal-body">
+      <div><span class="prompt">&gt;</span> <span class="cmd">fathom sweep --prompt "logical syllogism" --temps 0.0,0.3,0.7,1.0</span></div>
+      <div>&nbsp;</div>
+      <div><span class="dim">  T=0.0  depth: 0.34  </span><span class="dim">||||||||||||||||</span></div>
+      <div><span class="dim">  T=0.3  depth: </span><span class="hl">0.44</span><span class="dim">  |||||||||||||||||||||| </span><span class="hl">&larr; peak</span></div>
+      <div><span class="dim">  T=0.7  depth: 0.31  |||||||||||||||</span></div>
+      <div><span class="dim">  T=1.0  depth: </span><span class="warn">0.12</span><span class="dim">  ||||||</span></div>
+    </div>
   </div>
-</div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── Applications ────────────────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">Applications</div>
+  <h2>Fathom Goes Where <span class="accent">AI Thinks</span></h2>
+  <p class="lead">From pre-deployment safety checks to regulatory compliance, depth scoring creates accountability for AI reasoning.</p>
+
+  <div class="app-grid">
+    <div class="app-card">
+      <div class="app-icon">[!]</div>
+      <div class="app-name">AI SAFETY</div>
+      <div class="app-desc">Pre-action depth check. Shallow reasoning before a consequential decision triggers human escalation. Shallow = halt.</div>
+    </div>
+    <div class="app-card">
+      <div class="app-icon">[$]</div>
+      <div class="app-name">LEGAL</div>
+      <div class="app-desc">Post-Mata v. Avianca: prove your AI brief was reasoned, not retrieved. Fathom scores are the certificate.</div>
+    </div>
+    <div class="app-card">
+      <div class="app-icon">[+]</div>
+      <div class="app-name">MEDICINE</div>
+      <div class="app-desc">FDA AI explainability compliance. Circuit-level evidence that diagnostic AI reasons through cases, not pattern-matches.</div>
+    </div>
+    <div class="app-card">
+      <div class="app-icon">[?]</div>
+      <div class="app-name">EDUCATION</div>
+      <div class="app-desc">Distinguish AI tutors that reason through explanations vs retrieve textbook answers. Depth scores reveal the difference.</div>
+    </div>
+    <div class="app-card">
+      <div class="app-icon">[~]</div>
+      <div class="app-name">DEPLOYMENT</div>
+      <div class="app-desc">Task-specific optimal temperature calibration. T=0.3 produces 28% deeper integration than T=0 for reasoning tasks.</div>
+    </div>
+    <div class="app-card">
+      <div class="app-icon">[*]</div>
+      <div class="app-name">RESEARCH</div>
+      <div class="app-desc">Depth-certify AI hypotheses. Distinguish genuine multi-step reasoning from surface recombination of training data.</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ── API ──────────────────────────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">The API</div>
+  <h2>Simple. Fast. <span class="accent">Substrate-Agnostic.</span></h2>
+  <p class="lead">Four core endpoints. Sub-3s response. One GPU.</p>
+
+  <div class="api-grid">
+    <ul class="endpoint-list">
+      <li class="endpoint-item">
+        <span class="endpoint-method">POST</span>
+        <span class="endpoint-path">/v2/score</span>
+        <span class="endpoint-desc">Depth score</span>
+      </li>
+      <li class="endpoint-item">
+        <span class="endpoint-method">POST</span>
+        <span class="endpoint-path">/v2/fathom_score</span>
+        <span class="endpoint-desc">Grade 0-100</span>
+      </li>
+      <li class="endpoint-item">
+        <span class="endpoint-method">POST</span>
+        <span class="endpoint-path">/v2/fingerprint</span>
+        <span class="endpoint-desc">Cognitive vector</span>
+      </li>
+      <li class="endpoint-item">
+        <span class="endpoint-method">POST</span>
+        <span class="endpoint-path">/v2/batch</span>
+        <span class="endpoint-desc">Up to 20 prompts</span>
+      </li>
+    </ul>
+
+    <div class="terminal" style="margin: 0;">
+      <div class="terminal-bar">
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <div class="terminal-dot"></div>
+        <span class="terminal-title">curl</span>
+      </div>
+      <div class="terminal-body">
+        <div><span class="prompt">$</span> <span class="cmd">curl -X POST \</span></div>
+        <div><span class="cmd">  api.darkflobi.com/v2/fathom_score \</span></div>
+        <div><span class="cmd">  -d '{"prompt": "..."}'</span></div>
+        <div>&nbsp;</div>
+        <div><span class="dim">{</span></div>
+        <div><span class="dim">  "fathom_score": </span><span class="hl">78</span><span class="dim">,</span></div>
+        <div><span class="dim">  "grade": "</span><span class="hl">A</span><span class="dim">",</span></div>
+        <div><span class="dim">  "depth": </span><span class="hl">0.39</span><span class="dim">,</span></div>
+        <div><span class="dim">  "decomposability": "</span><span class="hl">irreducible</span><span class="dim">"</span></div>
+        <div><span class="dim">}</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
 
 <!-- ── Pricing ──────────────────────────────────────── -->
-<div class="section">
+<section class="section reveal">
   <div class="section-label">Pricing</div>
-  <h2>From Free to Enterprise</h2>
-  <p>Free for researchers. Scale with your deployment.</p>
+  <h2>Built for Enterprise. <span class="accent">Open to Researchers.</span></h2>
 
   <div class="pricing-grid">
     <div class="price-card">
-      <div class="tier">Researcher</div>
-      <div class="price">$0</div>
-      <div class="price-sub">100 req / month</div>
+      <div class="price-tier">Research</div>
+      <div class="price-amount">Free</div>
+      <div class="price-detail">500 req / month</div>
+    </div>
+    <div class="price-card">
+      <div class="price-tier">Developer</div>
+      <div class="price-amount">$299</div>
+      <div class="price-detail">50K req / month</div>
     </div>
     <div class="price-card featured">
-      <div class="tier">Developer</div>
-      <div class="price">$29</div>
-      <div class="price-sub">10k req / month</div>
+      <div class="price-tier">Pro</div>
+      <div class="price-amount">$999</div>
+      <div class="price-detail">500K req / month</div>
     </div>
     <div class="price-card">
-      <div class="tier">Pro</div>
-      <div class="price">$199</div>
-      <div class="price-sub">100k req / month</div>
-    </div>
-    <div class="price-card">
-      <div class="tier">Enterprise</div>
-      <div class="price">Custom</div>
-      <div class="price-sub">Unlimited + SLA</div>
+      <div class="price-tier">Enterprise</div>
+      <div class="price-amount">Custom</div>
+      <div class="price-detail">Compliance + SLA</div>
     </div>
   </div>
-</div>
 
-</div><!-- /.container -->
+  <p class="enterprise-note">Enterprise pricing for legal, medical, and government applications starts at $5,000/yr. Contact us for compliance use cases requiring custom SLAs, audit trails, and dedicated support.</p>
+</section>
 
 <!-- ── Footer ──────────────────────────────────────── -->
-<div class="footer">
-  <div>darkflobi &mdash; fathom v2.0 &mdash; 2026 &mdash; patent pending</div>
-  <div class="links">
-    <a href="/fathom/blog">Blog</a>
+<footer class="footer">
+  <div class="footer-brand">darkflobi &mdash; fathom v2.0 &mdash; 2026</div>
+  <div class="footer-links">
+    <a href="/fathom/blog">Paper</a>
     <a href="/fathom/waitlist">Waitlist</a>
     <a href="/dashboard">Dashboard</a>
     <a href="https://github.com/darkflobi/fathom">GitHub</a>
+    <a href="mailto:alex@darkflobi.com">Contact</a>
   </div>
-  <div style="margin-top: 16px; font-size: 10px;">Built in the dark. Measured in the light.</div>
-</div>
+  <div class="footer-patent">Patent Pending &mdash; US Provisional Application 64/020,489 &mdash; Filed March 29, 2026.<br>"System and Method for Measuring Reasoning Depth and Integrated Computational Geometry in Artificial Neural Networks."<br>&copy; 2026 Alexander Rodabaugh / darkflobi. All rights reserved.</div>
+  <div class="footer-tagline">Built in the dark. Measured in the light.</div>
+</footer>
+
+<!-- ── Scripts ─────────────────────────────────────── -->
+<script>
+// Particle generation
+(function() {
+  const container = document.getElementById('particles');
+  if (!container) return;
+  for (let i = 0; i < 40; i++) {
+    const dot = document.createElement('div');
+    dot.className = 'dot';
+    dot.style.left = Math.random() * 100 + '%';
+    dot.style.top = Math.random() * 100 + '%';
+    dot.style.animationDelay = (Math.random() * 8) + 's';
+    dot.style.animationDuration = (6 + Math.random() * 6) + 's';
+    container.appendChild(dot);
+  }
+})();
+
+// Scroll reveal
+(function() {
+  const els = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+  els.forEach(el => observer.observe(el));
+})();
+
+// Interactive Demo
+(function() {
+  const demos = [
+    {
+      prompt: 'What is the capital of France?',
+      depth: 0.08, grade: 'D', score: 14, bar: 14,
+      signal: 'shallow_recall', signalClass: 'signal-shallow',
+      decomp: 'fully decomposable'
+    },
+    {
+      prompt: 'List three theories of time perception and their key proponents.',
+      depth: 0.16, grade: 'C', score: 28, bar: 28,
+      signal: 'enumeration', signalClass: 'signal-shallow',
+      decomp: 'modular — independent items'
+    },
+    {
+      prompt: 'If all mammals are warm-blooded, and whales are mammals, what follows about whale thermoregulation in deep ocean environments?',
+      depth: 0.39, grade: 'A', score: 72, bar: 68,
+      signal: 'deep_reasoning', signalClass: 'signal-type',
+      decomp: 'irreducible — premises linked'
+    },
+    {
+      prompt: 'How does exercise affect depression through the interaction of BDNF, serotonin reuptake, and cortisol regulation?',
+      depth: 0.48, grade: 'S', score: 86, bar: 84,
+      signal: 'causal_web', signalClass: 'signal-type',
+      decomp: 'deeply integrated — cross-mechanism'
+    },
+    {
+      prompt: 'Can a formal system powerful enough to encode arithmetic ever prove its own consistency? Explain via the relationship between provability and truth.',
+      depth: 0.57, grade: 'S+', score: 95, bar: 100,
+      signal: 'meta_logical', signalClass: 'signal-type',
+      decomp: 'maximum phi — self-referential'
+    }
+  ];
+
+  const chips = document.querySelectorAll('.demo-chip');
+  const promptText = document.getElementById('demoPromptText');
+  const depthEl = document.getElementById('demoDepth');
+  const gradeEl = document.getElementById('demoGrade');
+  const scoreEl = document.getElementById('demoScore');
+  const barEl = document.getElementById('demoBar');
+  const signalEl = document.getElementById('demoSignal');
+  const decompEl = document.getElementById('demoDecomp');
+  const statusEl = document.getElementById('demoStatus');
+
+  function animateValue(el, target, isFloat) {
+    const start = parseFloat(el.textContent) || 0;
+    const diff = target - start;
+    const duration = 400;
+    const startTime = performance.now();
+
+    function step(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3);
+      const current = start + diff * ease;
+      el.textContent = isFloat ? current.toFixed(2) : Math.round(current);
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function runDemo(idx) {
+    const d = demos[idx];
+
+    // Update chips
+    chips.forEach(c => c.classList.remove('active'));
+    chips[idx].classList.add('active');
+
+    // Simulate analysis
+    statusEl.textContent = 'analyzing...';
+    statusEl.style.color = 'var(--gold)';
+
+    setTimeout(() => {
+      promptText.textContent = d.prompt;
+
+      setTimeout(() => {
+        statusEl.textContent = 'complete';
+        statusEl.style.color = 'var(--green-dim)';
+
+        animateValue(depthEl, d.depth, true);
+        gradeEl.textContent = d.grade;
+        animateValue(scoreEl, d.score, false);
+        barEl.style.width = d.bar + '%';
+        signalEl.className = d.signalClass;
+        signalEl.textContent = d.signal;
+        decompEl.textContent = d.decomp;
+      }, 300);
+    }, 150);
+  }
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => runDemo(parseInt(chip.dataset.idx)));
+  });
+})();
+</script>
 
 </body>
 </html>
