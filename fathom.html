@@ -45,6 +45,8 @@ body {
   line-height: 1.7;
   min-height: 100vh;
   overflow-x: hidden;
+  background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
 }
 
 ::selection {
@@ -127,6 +129,11 @@ body {
 .nav-cta:hover {
   background: var(--green);
   color: var(--bg);
+}
+
+.nav.scrolled {
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  border-bottom-color: transparent;
 }
 
 /* ── Hero ─────────────────────────────────────── */
@@ -853,6 +860,118 @@ body {
   margin-top: 20px;
 }
 
+/* ── How It Works ─────────────────────────────── */
+.steps {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  margin: 48px 0;
+  position: relative;
+}
+
+.step {
+  background: var(--surface);
+  padding: 36px 28px;
+  text-align: center;
+  position: relative;
+}
+
+.step-num {
+  font-family: var(--mono);
+  font-size: 36px;
+  font-weight: 200;
+  color: var(--green);
+  opacity: 0.3;
+  margin-bottom: 12px;
+}
+
+.step-title {
+  font-family: var(--sans);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-bright);
+  margin-bottom: 8px;
+}
+
+.step-desc {
+  font-family: var(--body);
+  font-size: 12px;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.step-arrow {
+  position: absolute;
+  right: -8px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--green-dim);
+  font-size: 14px;
+  z-index: 1;
+}
+
+/* ── Demo Layer Viz ───────────────────────────── */
+.demo-layers {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 16px;
+  height: 32px;
+  align-items: flex-end;
+}
+
+.demo-layer-bar {
+  flex: 1;
+  background: var(--border);
+  border-radius: 2px 2px 0 0;
+  transition: height 0.5s cubic-bezier(0.4, 0, 0.2, 1), background 0.5s ease;
+  min-height: 3px;
+}
+
+.demo-layer-bar.active-early { background: var(--green-dim); }
+.demo-layer-bar.active-mid { background: var(--green); }
+.demo-layer-bar.active-late { background: var(--green-dim); }
+
+.demo-layer-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: var(--text-dim);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+
+/* ── Final CTA ────────────────────────────────── */
+.final-cta {
+  text-align: center;
+  padding: 80px 24px;
+  background: radial-gradient(ellipse 70% 50% at 50% 50%, rgba(0,255,65,0.03) 0%, transparent 70%);
+}
+
+.final-cta h2 {
+  font-family: var(--sans);
+  font-size: 28px;
+  font-weight: 500;
+  color: var(--text-bright);
+  margin-bottom: 12px;
+}
+
+.final-cta p {
+  font-family: var(--body);
+  font-size: 15px;
+  color: var(--text-dim);
+  margin-bottom: 32px;
+}
+
+.final-cta .cta-row {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
 /* ── Animations ───────────────────────────────── */
 .reveal {
   opacity: 0;
@@ -874,6 +993,11 @@ body {
   .hero .cta-row .btn { width: 260px; text-align: center; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .app-grid { grid-template-columns: 1fr; }
+  .steps { grid-template-columns: 1fr; }
+  .step-arrow { display: none; }
+  .final-cta .cta-row { flex-direction: column; align-items: center; }
+  .final-cta .cta-row .btn { width: 260px; text-align: center; }
+  .demo-layers { height: 24px; }
   .api-grid { grid-template-columns: 1fr; }
   .pricing-grid { grid-template-columns: repeat(2, 1fr); }
   .nav-links { display: none; }
@@ -980,6 +1104,35 @@ body {
 
 <div class="section-divider"></div>
 
+<!-- ── How It Works ───────────────────────────────── -->
+<section class="section reveal">
+  <div class="section-label">Method</div>
+  <h2>How <span class="accent">Fathom</span> Works</h2>
+  <p class="lead">Three steps. One number. The number tells you something no benchmark ever could.</p>
+
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-title">Instrument Layers</div>
+      <div class="step-desc">SAE circuit-tracer decomposes each transformer layer into interpretable features and maps activation mass across all 26 layers.</div>
+      <span class="step-arrow">&rarr;</span>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-title">Measure Geometry</div>
+      <div class="step-desc">Compute the distribution of attributions: where does computation concentrate? Output-proximal layers (shallow) or mid-layers (deep)?</div>
+      <span class="step-arrow">&rarr;</span>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-title">Score Depth</div>
+      <div class="step-desc">Normalize against calibration baselines to produce a single depth score: 0.0 (pure recall) to 0.57+ (meta-logical integration).</div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
 <!-- ── Interactive Demo ───────────────────────────── -->
 <section class="section reveal">
   <div class="section-label">Live Demo</div>
@@ -1019,6 +1172,8 @@ body {
             <div class="demo-result-label">Fathom Score</div>
           </div>
         </div>
+        <div class="demo-layers" id="demoLayers"></div>
+        <div class="demo-layer-label"><span>early layers</span><span>mid layers</span><span>late layers</span></div>
         <div class="demo-depth-bar">
           <div class="demo-depth-fill" id="demoBar" style="width: 14%;"></div>
         </div>
@@ -1310,6 +1465,17 @@ body {
   <p class="enterprise-note">Enterprise pricing for legal, medical, and government applications starts at $5,000/yr. Contact us for compliance use cases requiring custom SLAs, audit trails, and dedicated support.</p>
 </section>
 
+<!-- ── Final CTA ──────────────────────────────────── -->
+<div class="section-divider"></div>
+<section class="final-cta reveal">
+  <h2>Not what the model said. <span class="accent">How it thought.</span></h2>
+  <p>Join researchers, safety teams, and enterprises measuring reasoning depth.</p>
+  <div class="cta-row">
+    <a href="/fathom/waitlist" class="btn btn-primary">JOIN WAITLIST</a>
+    <a href="/fathom/blog" class="btn btn-ghost">READ THE PAPER</a>
+  </div>
+</section>
+
 <!-- ── Footer ──────────────────────────────────────── -->
 <footer class="footer">
   <div class="footer-brand">darkflobi &mdash; fathom v2.0 &mdash; 2026</div>
@@ -1326,6 +1492,21 @@ body {
 
 <!-- ── Scripts ─────────────────────────────────────── -->
 <script>
+// Nav scroll shadow
+(function() {
+  const nav = document.querySelector('.nav');
+  let ticking = false;
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(() => {
+        nav.classList.toggle('scrolled', window.scrollY > 20);
+        ticking = false;
+      });
+      ticking = true;
+    }
+  });
+})();
+
 // Particle generation
 (function() {
   const container = document.getElementById('particles');
@@ -1358,38 +1539,77 @@ body {
   els.forEach(el => observer.observe(el));
 })();
 
+// Scale bar scroll animation
+(function() {
+  const scaleSection = document.querySelector('.scale-container');
+  if (!scaleSection) return;
+  const bars = scaleSection.querySelectorAll('.scale-bar');
+  const targets = [];
+  bars.forEach(bar => {
+    targets.push(bar.style.width);
+    bar.style.width = '0%';
+  });
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        bars.forEach((bar, i) => {
+          setTimeout(() => { bar.style.width = targets[i]; }, i * 100);
+        });
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.2 });
+  obs.observe(scaleSection);
+})();
+
 // Interactive Demo
 (function() {
+  // Build layer bars
+  const layerContainer = document.getElementById('demoLayers');
+  if (layerContainer) {
+    for (let i = 0; i < 26; i++) {
+      const bar = document.createElement('div');
+      bar.className = 'demo-layer-bar';
+      bar.style.height = '3px';
+      layerContainer.appendChild(bar);
+    }
+  }
+
   const demos = [
     {
       prompt: 'What is the capital of France?',
       depth: 0.08, grade: 'D', score: 14, bar: 14,
       signal: 'shallow_recall', signalClass: 'signal-shallow',
-      decomp: 'fully decomposable'
+      decomp: 'fully decomposable',
+      layers: [2,2,2,3,3,3,2,2,2,2,2,2,2,2,2,2,2,3,3,4,6,9,18,28,30,26]
     },
     {
       prompt: 'List three theories of time perception and their key proponents.',
       depth: 0.16, grade: 'C', score: 28, bar: 28,
       signal: 'enumeration', signalClass: 'signal-shallow',
-      decomp: 'modular — independent items'
+      decomp: 'modular — independent items',
+      layers: [3,3,4,5,5,5,4,4,4,5,5,6,6,6,7,7,8,8,9,10,12,15,18,20,16,10]
     },
     {
       prompt: 'If all mammals are warm-blooded, and whales are mammals, what follows about whale thermoregulation in deep ocean environments?',
       depth: 0.39, grade: 'A', score: 72, bar: 68,
       signal: 'deep_reasoning', signalClass: 'signal-type',
-      decomp: 'irreducible — premises linked'
+      decomp: 'irreducible — premises linked',
+      layers: [4,5,6,8,10,12,14,16,18,20,22,24,22,20,18,16,14,12,10,9,8,7,6,5,5,4]
     },
     {
       prompt: 'How does exercise affect depression through the interaction of BDNF, serotonin reuptake, and cortisol regulation?',
       depth: 0.48, grade: 'S', score: 86, bar: 84,
       signal: 'causal_web', signalClass: 'signal-type',
-      decomp: 'deeply integrated — cross-mechanism'
+      decomp: 'deeply integrated — cross-mechanism',
+      layers: [6,8,10,13,16,18,22,24,26,28,28,26,24,22,20,18,16,14,12,10,8,7,6,5,4,4]
     },
     {
-      prompt: 'Can a formal system powerful enough to encode arithmetic ever prove its own consistency? Explain via the relationship between provability and truth.',
+      prompt: 'Can a formal system prove its own consistency? Explain via provability and truth.',
       depth: 0.57, grade: 'S+', score: 95, bar: 100,
       signal: 'meta_logical', signalClass: 'signal-type',
-      decomp: 'maximum phi — self-referential'
+      decomp: 'maximum phi — self-referential',
+      layers: [8,10,14,18,22,24,26,28,30,30,28,26,24,22,20,18,16,14,12,10,8,7,6,5,4,4]
     }
   ];
 
@@ -1448,11 +1668,34 @@ body {
       signalEl.className = d.signalClass;
       signalEl.textContent = d.signal;
       decompEl.textContent = d.decomp;
+
+      // Animate layer bars
+      const layerBars = document.querySelectorAll('.demo-layer-bar');
+      layerBars.forEach((bar, i) => {
+        setTimeout(() => {
+          const h = d.layers[i];
+          bar.style.height = h + 'px';
+          bar.className = 'demo-layer-bar';
+          if (i < 8) bar.classList.add('active-early');
+          else if (i < 18) bar.classList.add('active-mid');
+          else bar.classList.add('active-late');
+        }, i * 20);
+      });
     }, 700);
   }
 
   chips.forEach(chip => {
     chip.addEventListener('click', () => runDemo(parseInt(chip.dataset.idx)));
+  });
+
+  // Initialize layer bars to first demo state
+  const initBars = document.querySelectorAll('.demo-layer-bar');
+  const d0 = demos[0];
+  initBars.forEach((bar, i) => {
+    bar.style.height = d0.layers[i] + 'px';
+    if (i < 8) bar.classList.add('active-early');
+    else if (i < 18) bar.classList.add('active-mid');
+    else bar.classList.add('active-late');
   });
 })();
 </script>
