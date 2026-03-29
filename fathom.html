@@ -135,6 +135,7 @@ body {
   text-align: center;
   padding: 120px 24px 100px;
   overflow: hidden;
+  background: radial-gradient(ellipse 80% 60% at 50% 40%, rgba(0,255,65,0.04) 0%, transparent 70%);
 }
 
 .hero-particles {
@@ -145,19 +146,49 @@ body {
 
 .hero-particles .dot {
   position: absolute;
-  width: 2px;
-  height: 2px;
   background: var(--green);
   border-radius: 50%;
   opacity: 0;
-  animation: particle-float 8s ease-in-out infinite;
+  animation: particle-float ease-in-out infinite;
 }
 
 @keyframes particle-float {
   0%, 100% { opacity: 0; transform: translateY(0) scale(0.5); }
-  20% { opacity: 0.4; }
-  50% { opacity: 0.15; transform: translateY(-60px) scale(1); }
-  80% { opacity: 0.3; }
+  15% { opacity: 0.5; }
+  50% { opacity: 0.12; transform: translateY(-80px) scale(1.2); }
+  85% { opacity: 0.35; }
+}
+
+/* Scroll indicator */
+.scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  opacity: 0.3;
+  animation: scroll-pulse 2.5s ease-in-out infinite;
+}
+
+.scroll-hint-line {
+  width: 1px;
+  height: 24px;
+  background: linear-gradient(to bottom, var(--green), transparent);
+}
+
+.scroll-hint-text {
+  font-size: 9px;
+  letter-spacing: 3px;
+  color: var(--text-dim);
+  text-transform: uppercase;
+}
+
+@keyframes scroll-pulse {
+  0%, 100% { opacity: 0.3; transform: translateX(-50%) translateY(0); }
+  50% { opacity: 0.6; transform: translateX(-50%) translateY(4px); }
 }
 
 .hero h1 {
@@ -397,7 +428,7 @@ body {
 
 .scale-row:last-child { border-bottom: none; }
 
-.scale-row:hover { background: var(--green-subtle); margin: 0 -12px; padding: 14px 12px; }
+.scale-row:hover { background: var(--green-subtle); }
 
 .scale-score {
   font-family: var(--mono);
@@ -786,8 +817,9 @@ body {
 
 .footer-links {
   display: flex;
-  gap: 28px;
+  gap: 20px;
   justify-content: center;
+  flex-wrap: wrap;
   margin-bottom: 24px;
 }
 
@@ -825,7 +857,8 @@ body {
 .reveal {
   opacity: 0;
   transform: translateY(24px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1), transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
 .reveal.visible {
@@ -837,6 +870,8 @@ body {
 @media (max-width: 768px) {
   .hero h1 { font-size: 42px; letter-spacing: 16px; }
   .hero .tagline { font-size: 17px; }
+  .hero .cta-row { flex-direction: column; align-items: center; }
+  .hero .cta-row .btn { width: 260px; text-align: center; }
   .stat-grid { grid-template-columns: repeat(2, 1fr); }
   .app-grid { grid-template-columns: 1fr; }
   .api-grid { grid-template-columns: 1fr; }
@@ -844,11 +879,17 @@ body {
   .nav-links { display: none; }
   .demo-results { grid-template-columns: 1fr; }
   .section { padding: 64px 20px; }
+  .patent-strip { font-size: 9px; letter-spacing: 1px; padding: 6px 16px; }
+  .scroll-hint { display: none; }
+  .law-block { padding: 20px; }
+  .terminal-body { padding: 16px; font-size: 12px; }
 }
 
 @media (max-width: 480px) {
   .hero h1 { font-size: 32px; letter-spacing: 10px; }
   .pricing-grid { grid-template-columns: 1fr 1fr; }
+  .scale-row { grid-template-columns: 56px 1fr; gap: 12px; }
+  .scale-score { font-size: 13px; }
 }
 </style>
 </head>
@@ -868,6 +909,7 @@ body {
     <li><a href="/fingerprint">Fingerprint</a></li>
     <li><a href="/radar">Radar</a></li>
     <li><a href="/atlas">Atlas</a></li>
+    <li><a href="/por">PoR</a></li>
     <li><a href="/index">Index</a></li>
     <li><a href="/tribe">TRIBE</a></li>
   </ul>
@@ -884,6 +926,11 @@ body {
   <div class="cta-row">
     <a href="/fathom/waitlist" class="btn btn-primary">JOIN WAITLIST</a>
     <a href="/fathom/blog" class="btn btn-ghost">READ THE PAPER</a>
+    <a href="/dashboard" class="btn btn-ghost">LIVE DASHBOARD</a>
+  </div>
+  <div class="scroll-hint">
+    <div class="scroll-hint-line"></div>
+    <div class="scroll-hint-text">scroll</div>
   </div>
 </section>
 
@@ -1094,7 +1141,7 @@ body {
 <section class="section reveal">
   <div class="section-label">Temperature Dynamics</div>
   <h2>Stochastic Resonance in <span class="accent">Integration Tasks</span></h2>
-  <p class="lead">For computation tasks, noise always hurts. For integration tasks, moderate noise increases depth &mdash; precisely paralleling the biological phenomenon of stochastic resonance in neural systems.</p>
+  <p class="lead">For computation tasks, noise always hurts. For integration tasks, moderate noise <em style="color:var(--green);font-style:normal;font-weight:600">increases</em> depth &mdash; precisely paralleling the biological phenomenon of stochastic resonance in neural systems.</p>
 
   <div class="stat-grid">
     <div class="stat-card">
@@ -1283,13 +1330,16 @@ body {
 (function() {
   const container = document.getElementById('particles');
   if (!container) return;
-  for (let i = 0; i < 40; i++) {
+  for (let i = 0; i < 60; i++) {
     const dot = document.createElement('div');
     dot.className = 'dot';
+    const size = 1 + Math.random() * 2.5;
+    dot.style.width = size + 'px';
+    dot.style.height = size + 'px';
     dot.style.left = Math.random() * 100 + '%';
     dot.style.top = Math.random() * 100 + '%';
-    dot.style.animationDelay = (Math.random() * 8) + 's';
-    dot.style.animationDuration = (6 + Math.random() * 6) + 's';
+    dot.style.animationDelay = (Math.random() * 10) + 's';
+    dot.style.animationDuration = (6 + Math.random() * 8) + 's';
     container.appendChild(dot);
   }
 })();
@@ -1377,26 +1427,28 @@ body {
     chips.forEach(c => c.classList.remove('active'));
     chips[idx].classList.add('active');
 
-    // Simulate analysis
+    // Simulate analysis with realistic timing
     statusEl.textContent = 'analyzing...';
     statusEl.style.color = 'var(--gold)';
+    barEl.style.width = '0%';
 
     setTimeout(() => {
       promptText.textContent = d.prompt;
+      statusEl.textContent = 'scoring layers...';
+    }, 200);
 
-      setTimeout(() => {
-        statusEl.textContent = 'complete';
-        statusEl.style.color = 'var(--green-dim)';
+    setTimeout(() => {
+      statusEl.textContent = 'complete';
+      statusEl.style.color = 'var(--green-dim)';
 
-        animateValue(depthEl, d.depth, true);
-        gradeEl.textContent = d.grade;
-        animateValue(scoreEl, d.score, false);
-        barEl.style.width = d.bar + '%';
-        signalEl.className = d.signalClass;
-        signalEl.textContent = d.signal;
-        decompEl.textContent = d.decomp;
-      }, 300);
-    }, 150);
+      animateValue(depthEl, d.depth, true);
+      gradeEl.textContent = d.grade;
+      animateValue(scoreEl, d.score, false);
+      barEl.style.width = d.bar + '%';
+      signalEl.className = d.signalClass;
+      signalEl.textContent = d.signal;
+      decompEl.textContent = d.decomp;
+    }, 700);
   }
 
   chips.forEach(chip => {
