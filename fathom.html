@@ -774,8 +774,9 @@ footer {
   <h2 class="reveal">Request Access</h2>
   <div class="cta-sub reveal">Be first to measure how deeply AI thinks.</div>
 
-  <form class="cta-form reveal" id="accessForm">
-    <input type="email" placeholder="you@organization.com" required id="accessEmail" autocomplete="email">
+  <form class="cta-form reveal" id="accessForm" name="access" method="POST" data-netlify="true">
+    <input type="hidden" name="form-name" value="access">
+    <input type="email" name="email" placeholder="you@organization.com" required id="accessEmail" autocomplete="email">
     <button type="submit"><span>REQUEST</span></button>
   </form>
   <div class="cta-status" id="accessStatus"></div>
@@ -936,17 +937,17 @@ function countUp() {
   });
 }
 
-// ── Form ──────────────────────────────────────────
+// ── Form (Netlify Forms) ─────────────────────────
 document.getElementById('accessForm').addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('accessEmail').value;
   const status = document.getElementById('accessStatus');
 
   try {
-    const res = await fetch('/waitlist', {
+    const res = await fetch('/', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email})
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({'form-name': 'access', email}).toString()
     });
     if (res.ok) {
       status.textContent = "We'll be in touch.";
@@ -957,12 +958,8 @@ document.getElementById('accessForm').addEventListener('submit', async (e) => {
       status.className = 'cta-status error';
     }
   } catch {
-    const existing = JSON.parse(localStorage.getItem('fathom_waitlist') || '[]');
-    existing.push({email, timestamp: new Date().toISOString()});
-    localStorage.setItem('fathom_waitlist', JSON.stringify(existing));
-    status.textContent = "We'll be in touch.";
-    status.className = 'cta-status success';
-    document.getElementById('accessEmail').value = '';
+    status.textContent = 'Connection failed. Try again.';
+    status.className = 'cta-status error';
   }
 });
 </script>

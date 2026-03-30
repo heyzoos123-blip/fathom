@@ -363,14 +363,15 @@ footer {
     <div class="tagline">Measure how deeply AI reasons.</div>
   </div>
 
-  <div class="form-section">
+  <form class="form-section" id="accessForm" name="access" method="POST" data-netlify="true">
+    <input type="hidden" name="form-name" value="access">
     <label>Email Address</label>
     <div class="input-row">
-      <input type="email" id="email" placeholder="you@organization.com" autocomplete="email">
-      <button id="submit-btn" onclick="submit()"><span>REQUEST</span></button>
+      <input type="email" id="email" name="email" placeholder="you@organization.com" autocomplete="email">
+      <button type="submit" id="submit-btn"><span>REQUEST</span></button>
     </div>
     <div class="status" id="status"></div>
-  </div>
+  </form>
 
   <div class="counter">
     <span class="number" id="count">&mdash;</span> on the list
@@ -393,19 +394,8 @@ footer {
 </footer>
 
 <script>
-const API = window.location.origin;
-
-async function loadCount() {
-  try {
-    const res = await fetch(API + '/waitlist/count');
-    if (res.ok) {
-      const data = await res.json();
-      document.getElementById('count').textContent = data.count;
-    }
-  } catch (e) {}
-}
-
-async function submit() {
+document.getElementById('accessForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
   const email = document.getElementById('email').value.trim();
   const btn = document.getElementById('submit-btn');
   const status = document.getElementById('status');
@@ -421,19 +411,17 @@ async function submit() {
   status.textContent = '';
 
   try {
-    const res = await fetch(API + '/waitlist', {
+    const res = await fetch('/', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email }),
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({'form-name': 'access', email}).toString()
     });
-    const data = await res.json();
     if (res.ok) {
       status.textContent = "We'll be in touch.";
       status.className = 'status success';
       document.getElementById('email').value = '';
-      loadCount();
     } else {
-      status.textContent = data.detail || 'Something went wrong.';
+      status.textContent = 'Something went wrong.';
       status.className = 'status error';
     }
   } catch (e) {
@@ -443,13 +431,7 @@ async function submit() {
 
   btn.disabled = false;
   btn.querySelector('span').textContent = 'REQUEST';
-}
-
-document.getElementById('email').addEventListener('keydown', (e) => {
-  if (e.key === 'Enter') submit();
 });
-
-loadCount();
 </script>
 
 </body>

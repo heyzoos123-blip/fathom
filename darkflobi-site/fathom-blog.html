@@ -751,8 +751,9 @@ footer {
 <section class="waitlist-section">
   <h2>Request Access</h2>
   <p class="sub">Be first to measure how deeply AI thinks.</p>
-  <form class="waitlist-form" id="waitlistForm">
-    <input type="email" placeholder="you@organization.com" required id="waitlistEmail" autocomplete="email">
+  <form class="waitlist-form" id="waitlistForm" name="access" method="POST" data-netlify="true">
+    <input type="hidden" name="form-name" value="access">
+    <input type="email" name="email" placeholder="you@organization.com" required id="waitlistEmail" autocomplete="email">
     <button type="submit">REQUEST</button>
   </form>
   <div class="waitlist-status" id="waitlistStatus"></div>
@@ -789,26 +790,22 @@ document.getElementById('waitlistForm').addEventListener('submit', async (e) => 
   const email = document.getElementById('waitlistEmail').value;
   const status = document.getElementById('waitlistStatus');
   try {
-    const res = await fetch('/waitlist', {
+    const res = await fetch('/', {
       method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({email})
+      headers: {'Content-Type': 'application/x-www-form-urlencoded'},
+      body: new URLSearchParams({'form-name': 'access', email}).toString()
     });
     if (res.ok) {
-      status.textContent = 'you are on the list.';
+      status.textContent = "We'll be in touch.";
       status.className = 'waitlist-status success';
       document.getElementById('waitlistEmail').value = '';
     } else {
-      status.textContent = 'something went wrong. try again.';
+      status.textContent = 'Something went wrong.';
       status.className = 'waitlist-status error';
     }
   } catch {
-    const existing = JSON.parse(localStorage.getItem('fathom_waitlist') || '[]');
-    existing.push({email, timestamp: new Date().toISOString()});
-    localStorage.setItem('fathom_waitlist', JSON.stringify(existing));
-    status.textContent = 'you are on the list. (saved locally)';
-    status.className = 'waitlist-status success';
-    document.getElementById('waitlistEmail').value = '';
+    status.textContent = 'Connection failed. Try again.';
+    status.className = 'waitlist-status error';
   }
 });
 </script>
