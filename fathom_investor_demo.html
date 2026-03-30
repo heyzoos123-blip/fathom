@@ -4,18 +4,50 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>FATHOM — Reasoning Depth Measurement</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap');
+  :root {
+    --bg: #040407;
+    --surface: #07070c;
+    --border: #14142a;
+    --text: #7878a0;
+    --text-dim: #36365a;
+    --text-bright: #a8a8c8;
+    --green: #00ffa8;
+    --green-dim: #00aa70;
+    --mono: 'JetBrains Mono', 'Courier New', monospace;
+    --font-display: 'Cinzel', serif;
+    --font-body: 'Inter', sans-serif;
+    --font-serif: 'Cormorant Garamond', Georgia, serif;
+  }
 
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
   body {
-    background: #000;
-    color: #fff;
-    font-family: 'JetBrains Mono', 'Courier New', monospace;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--mono);
     font-size: 14px;
     line-height: 1.6;
     min-height: 100vh;
+    cursor: crosshair;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    pointer-events: none;
+    z-index: 9999;
+    background: repeating-linear-gradient(
+      0deg,
+      rgba(0,255,168,0.004) 0px,
+      transparent 1px,
+      transparent 3px,
+      rgba(0,255,168,0.004) 4px
+    );
   }
 
   /* ── Header ────────────────────────────────────── */
@@ -24,16 +56,17 @@
     justify-content: space-between;
     align-items: center;
     padding: 16px 32px;
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid var(--border);
   }
   .header-left h1 {
-    color: #0f0;
+    font-family: var(--font-display);
+    color: var(--green);
     font-size: 28px;
     letter-spacing: 6px;
     margin-bottom: 2px;
   }
   .header-left p {
-    color: #666;
+    color: var(--text-dim);
     font-size: 11px;
   }
   .api-status {
@@ -41,7 +74,7 @@
     align-items: center;
     gap: 8px;
     font-size: 12px;
-    color: #666;
+    color: var(--text-dim);
   }
   .api-dot {
     width: 10px; height: 10px;
@@ -49,20 +82,20 @@
     background: #f00;
     transition: background 0.3s;
   }
-  .api-dot.connected { background: #0f0; box-shadow: 0 0 8px #0f0; }
+  .api-dot.connected { background: var(--green); box-shadow: 0 0 8px var(--green); }
 
   /* ── Domain Selector ───────────────────────────── */
   .domains {
     display: flex;
     gap: 8px;
     padding: 16px 32px;
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid var(--border);
     flex-wrap: wrap;
   }
   .domain-btn {
-    background: #111;
-    border: 1px solid #333;
-    color: #888;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
     padding: 8px 20px;
     font-family: inherit;
     font-size: 12px;
@@ -70,16 +103,16 @@
     cursor: pointer;
     transition: all 0.2s;
   }
-  .domain-btn:hover { border-color: #0f0; color: #0f0; }
+  .domain-btn:hover { border-color: var(--green); color: var(--green); }
   .domain-btn.active {
-    background: #0f0;
-    color: #000;
-    border-color: #0f0;
+    background: var(--green);
+    color: var(--bg);
+    border-color: var(--green);
     font-weight: 700;
   }
   .domain-btn.done {
-    border-color: #0a0;
-    color: #0a0;
+    border-color: var(--green-dim);
+    color: var(--green-dim);
     position: relative;
   }
   .domain-btn.done::after {
@@ -90,7 +123,7 @@
   .main { padding: 24px 32px; }
 
   .pair-label {
-    color: #0f0;
+    color: var(--green);
     font-size: 16px;
     margin-bottom: 16px;
     letter-spacing: 1px;
@@ -103,27 +136,27 @@
     margin-bottom: 8px;
   }
   .pair-col h3 {
-    color: #666;
+    color: var(--text-dim);
     font-size: 11px;
     letter-spacing: 3px;
     margin-bottom: 8px;
   }
   .pair-text {
-    background: #0a0a0a;
-    border: 1px solid #222;
+    background: var(--surface);
+    border: 1px solid var(--border);
     padding: 12px 16px;
-    color: #ccc;
+    color: var(--text-bright);
     font-size: 13px;
     min-height: 60px;
     line-height: 1.5;
   }
   .pair-target {
-    color: #0f0;
+    color: var(--green);
     font-size: 12px;
     margin-top: 8px;
   }
   .pair-why {
-    color: #555;
+    color: var(--text-dim);
     font-size: 11px;
     margin-top: 16px;
     font-style: italic;
@@ -137,8 +170,8 @@
   }
   .run-btn {
     background: transparent;
-    border: 2px solid #0f0;
-    color: #0f0;
+    border: 2px solid var(--green);
+    color: var(--green);
     padding: 14px 48px;
     font-family: inherit;
     font-size: 16px;
@@ -147,9 +180,9 @@
     transition: all 0.2s;
   }
   .run-btn:hover {
-    background: #0f0;
-    color: #000;
-    box-shadow: 0 0 20px rgba(0,255,0,0.3);
+    background: var(--green);
+    color: var(--bg);
+    box-shadow: 0 0 20px rgba(0,255,168,0.3);
   }
   .run-btn:disabled {
     opacity: 0.3;
@@ -159,7 +192,7 @@
   /* ── Loading ───────────────────────────────────── */
   .loading {
     text-align: center;
-    color: #0f0;
+    color: var(--green);
     font-size: 13px;
     padding: 16px 0;
     display: none;
@@ -189,23 +222,23 @@
     width: 140px;
     font-size: 12px;
     letter-spacing: 1px;
-    color: #888;
+    color: var(--text);
   }
   .depth-bar-wrap {
     flex: 1;
     height: 24px;
-    background: #111;
-    border: 1px solid #222;
+    background: var(--surface);
+    border: 1px solid var(--border);
     position: relative;
     overflow: hidden;
   }
   .depth-bar {
     height: 100%;
-    background: #0f0;
+    background: var(--green);
     width: 0%;
     transition: width 1s ease-out;
   }
-  .depth-bar.insight { background: #0a0; }
+  .depth-bar.insight { background: var(--green-dim); }
   .depth-value {
     width: 80px;
     text-align: right;
@@ -219,17 +252,17 @@
     gap: 8px 32px;
     margin: 20px 0;
     padding: 16px;
-    background: #0a0a0a;
-    border: 1px solid #222;
+    background: var(--surface);
+    border: 1px solid var(--border);
   }
   .stat-item {
     display: flex;
     justify-content: space-between;
     font-size: 12px;
   }
-  .stat-label { color: #666; }
-  .stat-value { color: #fff; font-weight: 700; }
-  .stat-value.positive { color: #0f0; }
+  .stat-label { color: var(--text-dim); }
+  .stat-value { color: var(--text-bright); font-weight: 700; }
+  .stat-value.positive { color: var(--green); }
   .stat-value.inverted { color: #fa0; }
 
   .layer-table {
@@ -239,39 +272,39 @@
     border-collapse: collapse;
   }
   .layer-table th {
-    color: #666;
+    color: var(--text-dim);
     text-align: left;
     padding: 6px 12px;
-    border-bottom: 1px solid #222;
+    border-bottom: 1px solid var(--border);
     letter-spacing: 2px;
     font-size: 10px;
   }
   .layer-table td {
     padding: 6px 12px;
-    border-bottom: 1px solid #111;
+    border-bottom: 1px solid var(--surface);
   }
 
   .constant-line {
     text-align: center;
     margin-top: 20px;
     padding: 12px;
-    border: 1px solid #222;
+    border: 1px solid var(--border);
     font-size: 12px;
-    color: #666;
+    color: var(--text-dim);
   }
-  .constant-line .k { color: #0f0; font-weight: 700; font-size: 14px; }
+  .constant-line .k { color: var(--green); font-weight: 700; font-size: 14px; }
 
   /* ── Session Summary ───────────────────────────── */
   .summary {
     display: none;
     margin-top: 32px;
     padding: 20px;
-    border: 2px solid #0f0;
-    background: #050505;
+    border: 2px solid var(--green);
+    background: var(--surface);
   }
   .summary.visible { display: block; }
   .summary h2 {
-    color: #0f0;
+    color: var(--green);
     font-size: 14px;
     letter-spacing: 4px;
     text-align: center;
@@ -289,27 +322,27 @@
     font-size: 12px;
     padding: 4px 8px;
   }
-  .summary-item .name { color: #888; }
-  .summary-item .val { color: #0f0; font-weight: 700; }
+  .summary-item .name { color: var(--text); }
+  .summary-item .val { color: var(--green); font-weight: 700; }
   .summary-footer {
     text-align: center;
-    color: #666;
+    color: var(--text-dim);
     font-size: 11px;
     margin-top: 12px;
     line-height: 1.8;
   }
-  .summary-footer .highlight { color: #0f0; }
+  .summary-footer .highlight { color: var(--green); }
 
   /* ── Custom Pair ───────────────────────────────── */
   .custom-section {
     margin-top: 32px;
-    border-top: 1px solid #222;
+    border-top: 1px solid var(--border);
     padding-top: 16px;
   }
   .custom-toggle {
     background: none;
-    border: 1px solid #333;
-    color: #666;
+    border: 1px solid var(--border);
+    color: var(--text-dim);
     padding: 8px 20px;
     font-family: inherit;
     font-size: 12px;
@@ -318,7 +351,7 @@
     width: 100%;
     text-align: left;
   }
-  .custom-toggle:hover { color: #0f0; border-color: #0f0; }
+  .custom-toggle:hover { color: var(--green); border-color: var(--green); }
   .custom-form {
     display: none;
     margin-top: 16px;
@@ -331,16 +364,16 @@
     margin-bottom: 8px;
   }
   .custom-form label {
-    color: #666;
+    color: var(--text-dim);
     font-size: 11px;
     letter-spacing: 1px;
     margin-bottom: 4px;
     display: block;
   }
   .custom-form input, .custom-form textarea {
-    background: #0a0a0a;
-    border: 1px solid #333;
-    color: #fff;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-bright);
     padding: 8px 12px;
     font-family: inherit;
     font-size: 13px;
@@ -349,7 +382,7 @@
   .custom-form textarea { resize: vertical; min-height: 50px; }
   .custom-form input:focus, .custom-form textarea:focus {
     outline: none;
-    border-color: #0f0;
+    border-color: var(--green);
   }
   .custom-results {
     margin-top: 16px;
@@ -360,11 +393,11 @@
   /* ── Leaderboard ────────────────────────────────── */
   .leaderboard-section {
     margin-top: 32px;
-    border-top: 1px solid #222;
+    border-top: 1px solid var(--border);
     padding-top: 16px;
   }
   .leaderboard-section h2 {
-    color: #0f0;
+    color: var(--green);
     font-size: 14px;
     letter-spacing: 4px;
     text-align: center;
@@ -372,7 +405,7 @@
   }
   .leaderboard-subtitle {
     text-align: center;
-    color: #555;
+    color: var(--text-dim);
     font-size: 11px;
     margin-bottom: 16px;
   }
@@ -382,62 +415,62 @@
     font-size: 13px;
   }
   .lb-table th {
-    color: #0f0;
+    color: var(--green);
     text-align: left;
     padding: 10px 16px;
-    border-bottom: 2px solid #0f0;
+    border-bottom: 2px solid var(--green);
     font-size: 11px;
     letter-spacing: 2px;
   }
   .lb-table td {
     padding: 10px 16px;
-    border-bottom: 1px solid #111;
+    border-bottom: 1px solid var(--surface);
   }
-  .lb-table tr:hover { background: #0a0a0a; }
+  .lb-table tr:hover { background: var(--surface); }
   .lb-rank {
-    color: #0f0;
+    color: var(--green);
     font-weight: 700;
     font-size: 16px;
     width: 40px;
   }
-  .lb-model { color: #fff; font-weight: 700; }
-  .lb-ratio { color: #0f0; }
-  .lb-pct { color: #888; }
+  .lb-model { color: var(--text-bright); font-weight: 700; }
+  .lb-ratio { color: var(--green); }
+  .lb-pct { color: var(--text); }
   .lb-bar-cell { width: 200px; }
   .lb-bar-wrap {
     height: 16px;
-    background: #111;
-    border: 1px solid #222;
+    background: var(--surface);
+    border: 1px solid var(--border);
     position: relative;
   }
   .lb-bar-fill {
     height: 100%;
-    background: #0f0;
+    background: var(--green);
     transition: width 1.5s ease-out;
   }
   .lb-reference {
     margin-top: 20px;
     padding: 12px 16px;
-    background: #0a0a0a;
-    border: 1px solid #222;
+    background: var(--surface);
+    border: 1px solid var(--border);
     font-size: 11px;
-    color: #555;
+    color: var(--text-dim);
   }
-  .lb-reference span { color: #0f0; }
+  .lb-reference span { color: var(--green); }
 
   /* ── Footer ────────────────────────────────────── */
   .footer {
     text-align: center;
     padding: 24px;
-    color: #333;
+    color: var(--text-dim);
     font-size: 11px;
-    border-top: 1px solid #111;
+    border-top: 1px solid var(--border);
     margin-top: 32px;
   }
 
   /* ── Error ──────────────────────────────────────── */
   .error-msg {
-    color: #f44;
+    color: var(--red, #f44);
     text-align: center;
     padding: 12px;
     display: none;
@@ -448,11 +481,11 @@
   /* ── Live Depth Stream ─────────────────────────── */
   .stream-section {
     margin-top: 32px;
-    border-top: 1px solid #222;
+    border-top: 1px solid var(--border);
     padding-top: 16px;
   }
   .stream-section h2 {
-    color: #0f0;
+    color: var(--green);
     font-size: 14px;
     letter-spacing: 4px;
     text-align: center;
@@ -460,7 +493,7 @@
   }
   .stream-subtitle {
     text-align: center;
-    color: #555;
+    color: var(--text-dim);
     font-size: 11px;
     margin-bottom: 16px;
   }
@@ -471,20 +504,20 @@
   }
   .stream-input textarea {
     flex: 1;
-    background: #0a0a0a;
-    border: 1px solid #333;
-    color: #fff;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-bright);
     padding: 10px 14px;
     font-family: inherit;
     font-size: 13px;
     resize: none;
     height: 48px;
   }
-  .stream-input textarea:focus { outline: none; border-color: #0f0; }
+  .stream-input textarea:focus { outline: none; border-color: var(--green); }
   .stream-btn {
     background: transparent;
-    border: 2px solid #0f0;
-    color: #0f0;
+    border: 2px solid var(--green);
+    color: var(--green);
     padding: 0 24px;
     font-family: inherit;
     font-size: 12px;
@@ -493,14 +526,14 @@
     white-space: nowrap;
     transition: all 0.2s;
   }
-  .stream-btn:hover { background: #0f0; color: #000; }
+  .stream-btn:hover { background: var(--green); color: var(--bg); }
   .stream-btn:disabled { opacity: 0.3; cursor: not-allowed; }
 
   .stream-chart {
     position: relative;
     height: 180px;
-    background: #050505;
-    border: 1px solid #222;
+    background: var(--surface);
+    border: 1px solid var(--border);
     margin-bottom: 12px;
     overflow: hidden;
   }
@@ -510,7 +543,7 @@
     left: 4px;
     top: 4px;
     font-size: 9px;
-    color: #444;
+    color: var(--text-dim);
     letter-spacing: 1px;
   }
   .chart-label-x {
@@ -518,7 +551,7 @@
     right: 4px;
     bottom: 4px;
     font-size: 9px;
-    color: #444;
+    color: var(--text-dim);
   }
 
   .stream-tokens {
@@ -528,8 +561,8 @@
     margin-bottom: 12px;
     min-height: 32px;
     padding: 8px;
-    background: #050505;
-    border: 1px solid #222;
+    background: var(--surface);
+    border: 1px solid var(--border);
   }
   .stream-token {
     padding: 2px 8px;
@@ -551,11 +584,11 @@
   .stream-stat {
     text-align: center;
     padding: 8px;
-    background: #0a0a0a;
-    border: 1px solid #222;
+    background: var(--surface);
+    border: 1px solid var(--border);
   }
-  .stream-stat .label { color: #555; font-size: 9px; letter-spacing: 1px; margin-bottom: 2px; }
-  .stream-stat .value { color: #0f0; font-size: 16px; font-weight: 700; }
+  .stream-stat .label { color: var(--text-dim); font-size: 9px; letter-spacing: 1px; margin-bottom: 2px; }
+  .stream-stat .value { color: var(--green); font-size: 16px; font-weight: 700; }
   .stream-stat .value.warn { color: #fa0; }
 </style>
 </head>

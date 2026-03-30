@@ -10,22 +10,22 @@
 <meta property="og:type" content="website">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg: #06060a;
-  --surface: #0e0e14;
-  --surface-2: #14141c;
-  --border: #1a1a24;
+  --bg: #040407;
+  --surface: #07070c;
+  --surface-2: #0c0c14;
+  --border: #14142a;
   --border-glow: #1e2e1e;
-  --text: #b8b8c8;
-  --text-dim: #555568;
-  --text-bright: #e0e0f0;
-  --green: #00ff88;
-  --green-dim: #00aa5c;
-  --green-glow: rgba(0,255,136,0.15);
+  --text: #7878a0;
+  --text-dim: #36365a;
+  --text-bright: #a8a8c8;
+  --green: #00ffa8;
+  --green-dim: #00aa70;
+  --green-glow: rgba(0,255,168,0.15);
   --cyan: #00d4ff;
   --cyan-glow: rgba(0,212,255,0.12);
   --gold: #ffd700;
@@ -33,7 +33,11 @@
   --red: #ff4444;
   --purple: #a855f7;
   --mono: 'JetBrains Mono', 'Cascadia Code', 'Fira Code', monospace;
-  --sans: 'Space Grotesk', -apple-system, sans-serif;
+  --sans: 'Inter', -apple-system, sans-serif;
+  --font-display: 'Cinzel', serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --font-body: 'Inter', sans-serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
 }
 
 html { scroll-behavior: smooth; }
@@ -45,6 +49,22 @@ body {
   font-size: 14px;
   line-height: 1.7;
   overflow-x: hidden;
+  cursor: crosshair;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 9999;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0,255,168,0.004) 0px,
+    transparent 1px,
+    transparent 3px,
+    rgba(0,255,168,0.004) 4px
+  );
 }
 
 ::selection { background: var(--green); color: var(--bg); }
@@ -90,7 +110,7 @@ body {
 }
 
 .hero h1 {
-  font-family: var(--sans);
+  font-family: var(--font-display);
   font-size: 72px;
   font-weight: 700;
   letter-spacing: 24px;
@@ -101,7 +121,7 @@ body {
 }
 
 .hero .tagline {
-  font-family: var(--sans);
+  font-family: var(--font-body);
   font-size: 20px;
   font-weight: 400;
   color: var(--text-bright);
@@ -206,7 +226,7 @@ body {
 }
 
 .section h2 {
-  font-family: var(--sans);
+  font-family: var(--font-display);
   font-size: 28px;
   font-weight: 600;
   color: var(--text-bright);
@@ -676,7 +696,7 @@ body {
   font-weight: 700;
   color: var(--green);
   margin-bottom: 12px;
-  font-family: var(--sans);
+  font-family: var(--font-display);
 }
 
 .step-title {
@@ -699,7 +719,7 @@ body {
 }
 
 .cta-section h2 {
-  font-family: var(--sans);
+  font-family: var(--font-display);
   font-size: 32px;
   color: var(--text-bright);
   margin-bottom: 12px;
