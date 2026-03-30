@@ -3,6 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link rel="icon" type="image/svg+xml" href="/favicon.svg">
+<meta property="og:image" content="https://fathom.darkflobi.com/og-image.svg">
 <title>FATHOM — Measure How Deeply AI Reasons</title>
 <meta name="description" content="The first instrument that measures reasoning depth inside AI. Cross-architecture validated. Patent pending.">
 <meta property="og:title" content="FATHOM — Measure How Deeply AI Reasons">
@@ -804,94 +806,149 @@ footer {
 (function() {
   const canvas = document.getElementById('heroCanvas');
   const ctx = canvas.getContext('2d');
-  let w, h, cx, cy, frame = 0;
+  let w, h, cx, cy;
   const dpr = Math.min(window.devicePixelRatio || 1, 2);
 
+  let layers = [];
   function resize() {
     const rect = canvas.parentElement.getBoundingClientRect();
-    w = rect.width;
-    h = rect.height;
-    canvas.width = w * dpr;
-    canvas.height = h * dpr;
-    canvas.style.width = w + 'px';
-    canvas.style.height = h + 'px';
+    w = rect.width; h = rect.height;
+    canvas.width = w * dpr; canvas.height = h * dpr;
+    canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    cx = w / 2;
-    cy = h / 2;
+    cx = w / 2; cy = h / 2;
+    // Build layer rings
+    layers = [];
+    const count = 14, maxR = Math.min(w, h) * 0.38;
+    for (let i = 0; i < count; i++) {
+      const t = i / (count - 1);
+      const midness = Math.max(0, 1 - Math.abs(t - 0.42) * 2.5);
+      layers.push({
+        radius: 40 + t * maxR,
+        nodes: 5 + Math.floor(t * 14),
+        speed: (0.00015 + t * 0.00025) * (i % 2 === 0 ? 1 : -1),
+        alpha: 0.05 + midness * 0.18,
+        offset: i * 0.47
+      });
+    }
   }
 
-  resize();
-  window.addEventListener('resize', resize);
-
-  // Layers: each ring represents a network layer
-  const layers = [];
-  const layerCount = 12;
-  for (let i = 0; i < layerCount; i++) {
-    const t = i / (layerCount - 1);
-    const radius = 80 + t * Math.min(w, h) * 0.32;
-    const nodeCount = 6 + Math.floor(t * 12);
-    const speed = (0.0002 + t * 0.0003) * (i % 2 === 0 ? 1 : -1);
-    // Mid layers are brighter (this IS the concept)
-    const midness = 1 - Math.abs(t - 0.45) * 2;
-    const alpha = 0.03 + midness * 0.06;
-    layers.push({ radius, nodeCount, speed, alpha, offset: Math.random() * Math.PI * 2 });
+  // Drifting particles
+  const particles = [];
+  for (let i = 0; i < 50; i++) {
+    particles.push({
+      a: Math.random() * Math.PI * 2,
+      r: 20 + Math.random() * 320,
+      s: (0.00005 + Math.random() * 0.0002) * (Math.random() > 0.5 ? 1 : -1),
+      size: 0.4 + Math.random() * 1.8,
+      alpha: 0.015 + Math.random() * 0.07
+    });
   }
 
   function draw(time) {
     ctx.clearRect(0, 0, w, h);
 
-    for (const layer of layers) {
-      const angle = time * layer.speed + layer.offset;
-      const r = layer.radius * (0.96 + Math.sin(time * 0.0003 + layer.offset) * 0.04);
+    // Center glow
+    const cg = ctx.createRadialGradient(cx, cy, 0, cx, cy, 140);
+    cg.addColorStop(0, 'rgba(0, 255, 168, 0.05)');
+    cg.addColorStop(1, 'transparent');
+    ctx.fillStyle = cg;
+    ctx.fillRect(cx - 140, cy - 140, 280, 280);
 
-      for (let n = 0; n < layer.nodeCount; n++) {
-        const a = angle + (n / layer.nodeCount) * Math.PI * 2;
+    // Draw layers + collect node positions for cross-connections
+    const allNodes = [];
+    for (const L of layers) {
+      const angle = time * L.speed + L.offset;
+      const r = L.radius * (0.97 + Math.sin(time * 0.0004 + L.offset) * 0.03);
+      const nodes = [];
+
+      // Faint ring trace
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0, Math.PI * 2);
+      ctx.strokeStyle = `rgba(0, 255, 168, ${L.alpha * 0.15})`;
+      ctx.lineWidth = 0.5;
+      ctx.stroke();
+
+      for (let n = 0; n < L.nodes; n++) {
+        const a = angle + (n / L.nodes) * Math.PI * 2;
         const x = cx + Math.cos(a) * r;
         const y = cy + Math.sin(a) * r;
-        const size = 1 + layer.alpha * 10;
+        const sz = 1.2 + L.alpha * 8;
+        nodes.push({ x, y });
+
+        // Glow halo on mid-layer nodes
+        if (L.alpha > 0.12) {
+          const g = ctx.createRadialGradient(x, y, 0, x, y, sz * 5);
+          g.addColorStop(0, `rgba(0, 255, 168, ${L.alpha * 0.25})`);
+          g.addColorStop(1, 'transparent');
+          ctx.fillStyle = g;
+          ctx.fillRect(x - sz * 5, y - sz * 5, sz * 10, sz * 10);
+        }
 
         // Node
         ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(0, 255, 168, ${layer.alpha})`;
+        ctx.arc(x, y, sz, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(0, 255, 168, ${L.alpha})`;
         ctx.fill();
 
-        // Connection to next node in same layer
-        const a2 = angle + ((n + 1) / layer.nodeCount) * Math.PI * 2;
-        const x2 = cx + Math.cos(a2) * r;
-        const y2 = cy + Math.sin(a2) * r;
+        // Intra-layer edge
+        const a2 = angle + ((n + 1) / L.nodes) * Math.PI * 2;
         ctx.beginPath();
         ctx.moveTo(x, y);
-        ctx.lineTo(x2, y2);
-        ctx.strokeStyle = `rgba(0, 255, 168, ${layer.alpha * 0.3})`;
+        ctx.lineTo(cx + Math.cos(a2) * r, cy + Math.sin(a2) * r);
+        ctx.strokeStyle = `rgba(0, 255, 168, ${L.alpha * 0.18})`;
         ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
+      allNodes.push({ nodes, alpha: L.alpha });
+    }
+
+    // Cross-layer attribution paths
+    for (let i = 0; i < allNodes.length - 1; i++) {
+      const from = allNodes[i], to = allNodes[i + 1];
+      const a = Math.min(from.alpha, to.alpha) * 0.1;
+      if (a < 0.005) continue;
+      const step = Math.max(1, Math.floor(from.nodes.length / 3));
+      for (let n = 0; n < from.nodes.length; n += step) {
+        const f = from.nodes[n], t = to.nodes[n % to.nodes.length];
+        ctx.beginPath();
+        ctx.moveTo(f.x, f.y);
+        ctx.lineTo(t.x, t.y);
+        ctx.strokeStyle = `rgba(0, 255, 168, ${a})`;
+        ctx.lineWidth = 0.3;
         ctx.stroke();
       }
     }
 
-    // Center dot — the output
-    const centerPulse = 0.4 + Math.sin(time * 0.001) * 0.2;
-    ctx.beginPath();
-    ctx.arc(cx, cy, 2, 0, Math.PI * 2);
-    ctx.fillStyle = `rgba(0, 255, 168, ${centerPulse})`;
-    ctx.fill();
-
-    // Subtle radial lines from center (attribution paths)
-    for (let i = 0; i < 6; i++) {
-      const a = time * 0.00015 + (i / 6) * Math.PI * 2;
-      const len = 60 + Math.sin(time * 0.0005 + i) * 30;
+    // Particles
+    for (const p of particles) {
+      p.a += p.s;
+      const x = cx + Math.cos(p.a) * p.r;
+      const y = cy + Math.sin(p.a) * p.r;
       ctx.beginPath();
-      ctx.moveTo(cx, cy);
-      ctx.lineTo(cx + Math.cos(a) * len, cy + Math.sin(a) * len);
-      ctx.strokeStyle = `rgba(0, 255, 168, 0.02)`;
-      ctx.lineWidth = 0.5;
-      ctx.stroke();
+      ctx.arc(x, y, p.size, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0, 255, 168, ${p.alpha})`;
+      ctx.fill();
     }
 
-    frame = requestAnimationFrame(draw);
+    // Center pulse
+    const pulse = 0.5 + Math.sin(time * 0.0008) * 0.3;
+    ctx.beginPath();
+    ctx.arc(cx, cy, 3.5, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0, 255, 168, ${pulse})`;
+    ctx.fill();
+    const ch = ctx.createRadialGradient(cx, cy, 0, cx, cy, 24);
+    ch.addColorStop(0, `rgba(0, 255, 168, ${pulse * 0.2})`);
+    ch.addColorStop(1, 'transparent');
+    ctx.fillStyle = ch;
+    ctx.fillRect(cx - 24, cy - 24, 48, 48);
+
+    requestAnimationFrame(draw);
   }
 
-  frame = requestAnimationFrame(draw);
+  resize();
+  window.addEventListener('resize', resize);
+  requestAnimationFrame(draw);
 })();
 
 // ── Reveal on Scroll ──────────────────────────────

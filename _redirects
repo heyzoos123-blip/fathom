@@ -7,5 +7,5 @@
 /fathom/investors      /fathom_investor_demo.html      200
 /dashboard             /dashboard/index.html           200
 
-# Root redirect
-/                      /fathom.html                    302
+# Root serves landing page directly
+/                      /fathom.html                    200
