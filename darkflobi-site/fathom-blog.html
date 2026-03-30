@@ -10,28 +10,29 @@
 <meta property="og:type" content="article">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Inter:wght@300;400;500;600&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,300;0,400;0,500;0,700;1,400&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Inter:wght@300;400;500&display=swap" rel="stylesheet">
 <style>
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --void: #050508;
-  --abyss: #0a0a10;
-  --deep: #0e0e18;
-  --surface: #121220;
-  --border: #1a1a2e;
-  --text: #9a9ab0;
-  --text-bright: #c8c8e0;
-  --text-dim: #4a4a60;
+  --void: #040407;
+  --abyss: #07070c;
+  --deep: #0b0b14;
+  --border: #14142a;
+  --border-subtle: #0f0f1e;
+  --text: #7878a0;
+  --text-bright: #a8a8c8;
+  --text-dim: #36365a;
   --glow: #00ffa8;
-  --glow-dim: #00aa70;
-  --cyan: #00d4ff;
+  --glow-mid: #00cc88;
+  --glow-dim: #007a52;
+  --glow-ghost: rgba(0, 255, 168, 0.03);
+  --cyan: #00c8ee;
+  --white: #cccce0;
   --amber: #ffb800;
-  --violet: #8844ff;
+  --amber-dim: #aa7a00;
   --red: #ff2244;
   --red-dim: #aa1133;
-  --amber-dim: #aa7a00;
-  --white: #e8e8f0;
 
   --font-display: 'Cinzel', 'Times New Roman', serif;
   --font-body: 'Inter', -apple-system, sans-serif;
@@ -46,18 +47,19 @@ body {
   color: var(--text);
   font-family: var(--font-body);
   font-size: 16px;
-  line-height: 1.85;
+  line-height: 1.7;
   min-height: 100vh;
   overflow-x: hidden;
   cursor: crosshair;
 }
 
-a, button, input { cursor: crosshair; }
-
 ::selection {
-  background: rgba(0, 255, 168, 0.2);
+  background: rgba(0, 255, 168, 0.12);
   color: var(--white);
 }
+
+a, button, input { cursor: crosshair; }
+a:hover, button:hover { cursor: crosshair; }
 
 /* Scanline */
 body::before {
@@ -65,23 +67,11 @@ body::before {
   position: fixed;
   inset: 0;
   background: repeating-linear-gradient(
-    0deg, transparent 0px, transparent 2px,
-    rgba(0, 255, 168, 0.008) 2px, rgba(0, 255, 168, 0.008) 3px
+    0deg, transparent 0px, transparent 3px,
+    rgba(0, 255, 168, 0.004) 3px, rgba(0, 255, 168, 0.004) 4px
   );
   pointer-events: none;
   z-index: 9999;
-}
-
-/* Ambient glow */
-body::after {
-  content: '';
-  position: fixed;
-  inset: 0;
-  background:
-    radial-gradient(ellipse at 30% 30%, rgba(0, 255, 168, 0.015) 0%, transparent 60%),
-    radial-gradient(ellipse at 70% 70%, rgba(0, 212, 255, 0.01) 0%, transparent 50%);
-  pointer-events: none;
-  z-index: -1;
 }
 
 .container {
@@ -96,49 +86,54 @@ nav {
   top: 0;
   left: 0;
   right: 0;
-  z-index: 100;
-  background: rgba(5, 5, 8, 0.88);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  padding: 0 32px;
+  z-index: 1000;
+  background: rgba(4, 4, 7, 0.92);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border-bottom: 1px solid var(--border-subtle);
 }
 
-nav .nav-inner {
-  max-width: 720px;
+.nav-inner {
+  max-width: 1000px;
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: 52px;
+  height: 60px;
+  padding: 0 40px;
 }
 
-nav .nav-brand {
+.nav-brand {
   font-family: var(--font-display);
-  font-size: 13px;
-  letter-spacing: 6px;
+  font-size: 12px;
+  letter-spacing: 10px;
   color: var(--glow);
   text-decoration: none;
-  text-shadow: 0 0 20px rgba(0, 255, 168, 0.3);
+  text-shadow: 0 0 40px rgba(0, 255, 168, 0.15);
+  transition: text-shadow 0.6s;
 }
 
-nav .nav-links {
+.nav-brand:hover {
+  text-shadow: 0 0 60px rgba(0, 255, 168, 0.3);
+}
+
+.nav-links {
   display: flex;
-  gap: 24px;
+  gap: 36px;
   list-style: none;
 }
 
-nav .nav-links a {
+.nav-links a {
   font-family: var(--font-mono);
-  font-size: 10px;
-  letter-spacing: 2px;
+  font-size: 9px;
+  letter-spacing: 3px;
   text-transform: uppercase;
   color: var(--text-dim);
   text-decoration: none;
-  transition: color 0.3s;
+  transition: color 0.5s;
 }
 
-nav .nav-links a:hover { color: var(--glow); }
+.nav-links a:hover { color: var(--glow-dim); }
 
 /* ── Article Header ─────────────────────────────────── */
 .article-header {
@@ -497,51 +492,60 @@ nav .nav-links a:hover { color: var(--glow); }
 .waitlist-status.error { color: var(--red); }
 
 /* ── Footer ──────────────────────────────────────── */
-.blog-footer {
-  border-top: 1px solid var(--border);
-  padding: 48px 0;
+footer {
+  border-top: 1px solid var(--border-subtle);
+  padding: 56px 40px;
   text-align: center;
 }
-
-.blog-footer .epitaph {
-  font-family: var(--font-serif);
-  font-size: 15px;
-  font-style: italic;
-  color: var(--text-dim);
-  opacity: 0.6;
-  margin-bottom: 16px;
-}
-
-.blog-footer .links {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  color: var(--text-dim);
-  letter-spacing: 2px;
-}
-
-.blog-footer .links a {
-  color: var(--glow-dim);
-  text-decoration: none;
-  transition: color 0.3s;
-}
-
-.blog-footer .links a:hover { color: var(--glow); }
-
-.blog-footer .legal {
+.footer-ip {
   font-family: var(--font-mono);
   font-size: 9px;
+  letter-spacing: 3px;
   color: var(--text-dim);
-  opacity: 0.3;
-  margin-top: 16px;
-  letter-spacing: 1px;
+  opacity: 0.6;
+  margin-bottom: 20px;
 }
+.footer-brand {
+  font-family: var(--font-display);
+  font-size: 10px;
+  letter-spacing: 6px;
+  color: var(--text-dim);
+  opacity: 0.35;
+  margin-bottom: 12px;
+}
+.footer-epitaph {
+  font-family: var(--font-serif);
+  font-size: 14px;
+  font-style: italic;
+  font-weight: 300;
+  color: var(--text-dim);
+  opacity: 0.25;
+  margin-bottom: 28px;
+}
+.footer-links {
+  display: flex;
+  gap: 28px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  opacity: 0.35;
+  transition: opacity 0.4s, color 0.4s;
+}
+.footer-links a:hover { opacity: 0.7; color: var(--glow-dim); }
 
 /* ── Responsive ──────────────────────────────────── */
 @media (max-width: 768px) {
   .stat-banner { grid-template-columns: repeat(3, 1fr); }
   .stat-banner .stat:nth-child(4),
   .stat-banner .stat:nth-child(5) { grid-column: span 1; }
-  nav .nav-links { display: none; }
+  .nav-links { display: none; }
 }
 
 @media (max-width: 480px) {
@@ -570,9 +574,9 @@ nav .nav-links a:hover { color: var(--glow); }
   <div class="nav-inner">
     <a href="/fathom" class="nav-brand">FATHOM</a>
     <ul class="nav-links">
-      <li><a href="/fathom">Home</a></li>
+      <li><a href="/fathom/blog">Research</a></li>
       <li><a href="/fathom/demo">Try It</a></li>
-      <li><a href="/fathom#access">Access</a></li>
+      <li><a href="#access">Access</a></li>
     </ul>
   </div>
 </nav>
@@ -755,14 +759,17 @@ nav .nav-links a:hover { color: var(--glow); }
 </section>
 
 <!-- Footer -->
-<footer class="blog-footer">
-  <p class="epitaph">Built at 5am, alone, on a single GPU. Because the question mattered and nobody was asking it.</p>
-  <div class="links">
-    <a href="/fathom">darkflobi.com/fathom</a> &middot;
-    <a href="/fathom/demo">demo</a> &middot;
-    <a href="/fathom#access">request access</a>
+<footer>
+  <div class="footer-ip">Patent Pending US 64/020,489 &middot; 15 claims &middot; Priority March 29, 2026</div>
+  <div class="footer-brand">DARKFLOBI</div>
+  <div class="footer-epitaph">Built in the dark. Measured in the light.</div>
+  <div class="footer-links">
+    <a href="/fathom/blog">Research</a>
+    <a href="/fathom/demo">Demo</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/fathom/leaderboard">Leaderboard</a>
+    <a href="/fathom/investors">Investors</a>
   </div>
-  <div class="legal">US Patent Pending 64/020,489 &middot; Priority Date March 29, 2026 &middot; darkflobi Industries</div>
 </footer>
 </main>
 
