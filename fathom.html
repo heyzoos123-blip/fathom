@@ -57,23 +57,8 @@ body {
 a, button, input { cursor: crosshair; }
 a:hover, button:hover { cursor: crosshair; }
 
-/* ── Noise Texture ─────────────────────────────── */
-svg#noise { position: fixed; width: 0; height: 0; }
-
-body::before {
-  content: '';
-  position: fixed;
-  inset: -50%;
-  width: 200%;
-  height: 200%;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-  pointer-events: none;
-  z-index: 10000;
-  opacity: 0.5;
-}
-
 /* ── Scanline ──────────────────────────────────── */
-body::after {
+body::before {
   content: '';
   position: fixed;
   inset: 0;
@@ -634,6 +619,30 @@ footer {
   font-weight: 300;
   color: var(--text-dim);
   opacity: 0.25;
+  margin-bottom: 28px;
+}
+
+.footer-links {
+  display: flex;
+  gap: 28px;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.footer-links a {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  text-decoration: none;
+  opacity: 0.35;
+  transition: opacity 0.4s, color 0.4s;
+}
+
+.footer-links a:hover {
+  opacity: 0.7;
+  color: var(--glow-dim);
 }
 
 /* ═══════════════════════════════════════════════════
@@ -777,6 +786,13 @@ footer {
   <div class="footer-ip">Patent Pending US 64/020,489 &middot; 15 claims &middot; Priority March 29, 2026</div>
   <div class="footer-brand">DARKFLOBI</div>
   <div class="footer-epitaph">Built in the dark. Measured in the light.</div>
+  <div class="footer-links">
+    <a href="/fathom/blog">Research</a>
+    <a href="/fathom/demo">Demo</a>
+    <a href="/dashboard">Dashboard</a>
+    <a href="/fathom/leaderboard">Leaderboard</a>
+    <a href="/fathom/investors">Investors</a>
+  </div>
 </footer>
 
 <!-- ═══════════════════════════════════════════════════
