@@ -243,46 +243,31 @@ class Vitals:
     abort_reason: Optional[str] = None
 
     def as_dict(self) -> dict:
-        out = {
-            "phase1_pre":  asdict(self.phase1_pre),
-            "phase2_early": asdict(self.phase2_early) if self.phase2_early else None,
-            "phase3_mid":   asdict(self.phase3_mid)   if self.phase3_mid   else None,
-            "phase4_late":  asdict(self.phase4_late)  if self.phase4_late  else None,
-            "tier_active": self.tier_active,
+        """JSON-serializable dict view. Injects computed fields
+        (confidence, top3) that aren't stored on PhaseReading."""
+        def _phase_dict(r: Optional[PhaseReading]) -> Optional[dict]:
+            if r is None:
+                return None
+            d = asdict(r)
+            d["confidence"] = r.confidence
+            d["top3"] = r.top3()
+            return d
+        return {
+            "phase1_pre":   _phase_dict(self.phase1_pre),
+            "phase2_early": _phase_dict(self.phase2_early),
+            "phase3_mid":   _phase_dict(self.phase3_mid),
+            "phase4_late":  _phase_dict(self.phase4_late),
+            "tier_active":  self.tier_active,
             "abort_reason": self.abort_reason,
         }
-        return out
 
     @property
     def summary(self) -> str:
-        """Human-readable terminal card. Used by watch mode and by
-        r.vitals.summary for quick eyeballing. Full ASCII card version
-        is rendered by the cli watch-mode printer."""
-        lines = [
-            "┌─ styxx vitals ─────────────────────────────────────────┐",
-        ]
-        for phase_name in PHASE_ORDER:
-            reading = getattr(self, phase_name.replace("_preflight", "_pre")
-                                     .replace("phase1_pre", "phase1_pre"), None)
-            if reading is None:
-                if phase_name == "phase1_preflight":
-                    reading = self.phase1_pre
-                elif phase_name == "phase2_early":
-                    reading = self.phase2_early
-                elif phase_name == "phase3_mid":
-                    reading = self.phase3_mid
-                elif phase_name == "phase4_late":
-                    reading = self.phase4_late
-            if reading is None:
-                continue
-            pred = reading.predicted_category
-            conf = reading.confidence
-            bar_width = 10
-            filled = int(round(conf * bar_width))
-            bar = "█" * filled + "░" * (bar_width - filled)
-            label = phase_name.replace("_", " ").ljust(22)
-            lines.append(f"│ {label} {pred:<14} {bar} {conf:.2f} │")
-        if self.abort_reason:
-            lines.append(f"│ ★ ABORT: {self.abort_reason:<44} │")
-        lines.append("└────────────────────────────────────────────────────────┘")
-        return "\n".join(lines)
+        """Render the full ASCII vitals card.
+
+        Delegates to styxx.cards.render_vitals_card so there's one
+        source of truth for card rendering. Lazy imported to avoid
+        a circular dependency between vitals.py and cards.py.
+        """
+        from .cards import render_vitals_card
+        return render_vitals_card(self)

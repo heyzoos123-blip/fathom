@@ -49,11 +49,13 @@ SPARK_BLOCKS = "▁▂▃▄▅▆▇█"
 BAR_FILLED = "█"
 BAR_EMPTY = "░"
 
-# Status marks
+# Status marks — visually distinct WITHOUT color, so terminals
+# without ANSI support or piped outputs still convey the status
+# (● solid = clear, ◐ half = watch/caution, ○ hollow = flag/danger)
 STATUS_GREEN  = "●"   # clear, pass, safe
-STATUS_YELLOW = "●"   # watch, caution
-STATUS_RED    = "●"   # gate tripped, abort
-STATUS_STAR   = "★"   # highlight, gate hit
+STATUS_YELLOW = "◐"   # watch, caution, refusal
+STATUS_RED    = "○"   # flag, adversarial, hallucination
+STATUS_STAR   = "★"   # highlight, gate tripped
 STATUS_DOT    = "·"
 STATUS_TICK   = "✓"
 STATUS_CROSS  = "✗"

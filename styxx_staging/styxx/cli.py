@@ -18,9 +18,7 @@ from __future__ import annotations
 
 import argparse
 import json
-import math
 import os
-import random
 import sys
 import time
 from pathlib import Path
@@ -98,42 +96,54 @@ def cmd_ask(args):
     """Read vitals on a single LLM call.
 
     For v0.1 this supports:
-      - --raw : read a pre-captured logprob JSON from a file
-      - --demo : generate a synthetic trajectory for aesthetics testing
+      - --raw <file>  : load a pre-captured logprob JSON
+      - --demo-kind X : use a real bundled atlas trajectory (one per
+                        category), so the classifier reads genuine
+                        data and produces honest predictions
 
     Real provider adapters (openai, anthropic) run through the import
-    path, not the CLI. The CLI is for scanning saved traces and for
-    showcase demos. v0.2 will add `styxx ask --openai "<prompt>"`
-    when we wire up a CLI-side api key flow.
+    path, not the CLI, for v0.1. v0.2 will add CLI-side api key flow.
     """
     runtime = StyxxRuntime()
+
+    preview_prompt = args.prompt
+    source_label = args.model or "demo"
 
     if args.raw:
         entropy, logprob, top2 = _load_trajectory_json(args.raw)
     else:
-        # Generate a synthetic but plausible demo trajectory
-        entropy, logprob, top2 = _synth_demo_trajectory(
-            seed=args.seed, kind=args.demo_kind or "reasoning",
-        )
+        # Use a real bundled atlas trajectory for the chosen kind.
+        kind = args.demo_kind or "reasoning"
+        entropy, logprob, top2, atlas_prompt = _get_demo_trajectory(kind)
+        # If the user didn't pass a prompt, use the real atlas prompt
+        if not preview_prompt:
+            preview_prompt = atlas_prompt
+        if args.model is None:
+            source_label = f"atlas:{kind}  (gemma-2-2b-it)"
 
     vitals = runtime.run_on_trajectories(entropy, logprob, top2)
 
-    _write_audit(vitals, prompt=args.prompt, model=args.model or "demo")
+    _write_audit(vitals, prompt=preview_prompt, model=source_label)
 
+    # Blank-line padding around all CLI output for readability
+    print()
     if args.watch:
         card = render_vitals_card(
             vitals=vitals,
-            prompt=args.prompt,
-            model=args.model or "demo",
+            prompt=preview_prompt,
+            model=source_label,
             n_tokens=len(entropy),
             entropy_traj=entropy,
             logprob_traj=logprob,
         )
         print(card)
-        return 0
-
-    # Default: compact one-liner
-    print(render_vitals_compact(vitals, prompt=args.prompt))
+    else:
+        # Compact one-liner with a minimal header for context
+        use_color = color_enabled()
+        header = wrap("  styxx · compact readout", Palette.DIM, use_color)
+        print(header)
+        print(render_vitals_compact(vitals, prompt=preview_prompt))
+    print()
     return 0
 
 
@@ -231,7 +241,9 @@ def cmd_scan(args):
         entropy_traj=entropy,
         logprob_traj=logprob,
     )
+    print()
     print(card)
+    print()
     _write_audit(vitals, prompt=args.prompt, model=args.model)
     return 0
 
@@ -253,42 +265,48 @@ def _load_trajectory_json(path: str):
     return e, l, t
 
 
-def _synth_demo_trajectory(seed: int = 42, kind: str = "reasoning"):
-    """Synthetic but plausible trajectories for demo / card aesthetics.
+_DEMO_TRAJECTORIES_CACHE = None
 
-    Deterministic by seed. These look like real generations but are
-    NOT used for classification training — the classifier is trained
-    only on real atlas captures.
+
+def _load_demo_trajectories():
+    """Load the bundled real atlas trajectories for CLI demos.
+
+    These are captures from google/gemma-2-2b-it in atlas v0.3, one
+    per category. Using real data means `styxx ask --demo-kind X`
+    shows the classifier behaving on genuine inputs, not synthetic
+    noise.
     """
-    rng = random.Random(seed)
-    n = 25
-    if kind == "reasoning":
-        base_ent = 1.5
-        base_lp = -0.6
-        base_t2 = 0.45
-    elif kind == "hallucination":
-        base_ent = 3.1
-        base_lp = -1.1
-        base_t2 = 0.30
-    elif kind == "creative":
-        base_ent = 1.4
-        base_lp = -0.40
-        base_t2 = 0.60
-    elif kind == "adversarial":
-        base_ent = 1.5
-        base_lp = -0.64
-        base_t2 = 0.43
-    elif kind == "retrieval":
-        base_ent = 1.5
-        base_lp = -0.52
-        base_t2 = 0.55
-    else:
-        base_ent, base_lp, base_t2 = 1.6, -0.55, 0.5
+    global _DEMO_TRAJECTORIES_CACHE
+    if _DEMO_TRAJECTORIES_CACHE is not None:
+        return _DEMO_TRAJECTORIES_CACHE
+    pkg_dir = Path(__file__).resolve().parent
+    path = pkg_dir / "centroids" / "demo_trajectories.json"
+    if not path.exists():
+        raise FileNotFoundError(
+            f"demo trajectories not bundled at {path}. "
+            "Run scripts/extract_demo_trajectories.py to regenerate."
+        )
+    with open(path, "r", encoding="utf-8") as f:
+        _DEMO_TRAJECTORIES_CACHE = json.load(f)
+    return _DEMO_TRAJECTORIES_CACHE
 
-    entropy = [max(0.0, base_ent + rng.gauss(0, 0.3)) for _ in range(n)]
-    logprob = [base_lp + rng.gauss(0, 0.2) for _ in range(n)]
-    top2 = [max(0.0, min(1.0, base_t2 + rng.gauss(0, 0.15))) for _ in range(n)]
-    return entropy, logprob, top2
+
+def _get_demo_trajectory(kind: str):
+    """Return (entropy, logprob, top2_margin, preview_prompt) for a
+    demo category. Raises if the category isn't bundled."""
+    data = _load_demo_trajectories()
+    traj_data = data["trajectories"].get(kind)
+    if traj_data is None:
+        raise ValueError(
+            f"no demo trajectory for kind '{kind}'. "
+            f"Available: {list(data['trajectories'].keys())}"
+        )
+    return (
+        list(traj_data["entropy"]),
+        list(traj_data["logprob"]),
+        list(traj_data["top2_margin"]),
+        traj_data.get("text_preview", ""),
+    )
 
 
 # ══════════════════════════════════════════════════════════════════
@@ -319,9 +337,9 @@ def _build_parser() -> argparse.ArgumentParser:
     p_ask.add_argument("--raw", help="path to a trajectory JSON file (entropy/logprob/top2_margin)")
     p_ask.add_argument("--model", help="model name for the card metadata")
     p_ask.add_argument("--demo-kind", default="reasoning",
-                       choices=["reasoning", "hallucination", "creative",
-                                "adversarial", "retrieval"],
-                       help="kind of synthetic trajectory to demo")
+                       choices=["retrieval", "reasoning", "refusal",
+                                "creative", "adversarial", "hallucination"],
+                       help="category of bundled atlas demo trajectory to read")
     p_ask.add_argument("--seed", type=int, default=42)
     p_ask.set_defaults(func=cmd_ask)
 
