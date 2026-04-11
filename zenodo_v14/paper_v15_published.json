@@ -1,0 +1,12 @@
+{
+  "new_record_id": 19504993,
+  "doi": "10.5281/zenodo.19504993",
+  "url": "https://zenodo.org/record/19504993",
+  "concept_doi": "10.5281/zenodo.19326174",
+  "supersedes": "10.5281/zenodo.19502710",
+  "absorbs": "10.5281/zenodo.19502716",
+  "bundles": [
+    "fathom_paper_v14.zip",
+    "fathom_atlas_v0.3.zip"
+  ]
+}

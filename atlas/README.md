@@ -126,18 +126,25 @@ reproducible.
 
 ## Citation
 
+The Atlas v0.3 data bundle is included as a sibling file on the
+unified Fathom paper v15 Zenodo record. Please cite the unified record:
+
 ```
-@misc{rodabaugh2026atlas,
-  title={The Fathom Cognitive Atlas v0.3: Pre-registered
-         Cross-Architecture Replication of the RLHF Attractor},
-  author={Rodabaugh, Alexander},
-  year={2026},
-  note={Zenodo. doi:10.5281/zenodo.19502716
-        (Concept DOI: 10.5281/zenodo.19502715)},
+@article{rodabaugh2026fathom,
+  title   = {Fathom: Cognitive Measurement Instruments for
+             Transformer Internals via SAE Feature Coherence Geometry},
+  author  = {Rodabaugh, Alexander},
+  year    = {2026},
+  note    = {Zenodo v15 (unified release: paper + Atlas v0.3 data bundle).
+             doi:10.5281/zenodo.19504993
+             (concept DOI: 10.5281/zenodo.19326174)}
 }
 ```
 
-Companion to the Fathom ICML 2026 MechInterp Workshop paper.
+The original standalone Atlas v0.3 record
+(`doi:10.5281/zenodo.19502716`, concept `10.5281/zenodo.19502715`)
+remains published as an archival record but is marked obsoleted by
+paper v15 and contains a byte-identical copy of the same data bundle.
 
 ## Status and roadmap
 

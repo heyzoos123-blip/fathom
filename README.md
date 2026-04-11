@@ -222,15 +222,9 @@ all claims in the paper verified to reproduce exactly from saved JSON data.
              Transformer Internals via SAE Feature Coherence Geometry},
   author  = {Rodabaugh, Alexander},
   year    = {2026},
-  note    = {Zenodo concept DOI. doi:10.5281/zenodo.19326174}
-}
-
-@misc{rodabaugh2026atlas,
-  title  = {The Fathom Cognitive Atlas v0.3: Pre-registered
-            Cross-Architecture Replication of the RLHF Attractor},
-  author = {Rodabaugh, Alexander},
-  year   = {2026},
-  note   = {Zenodo concept DOI. doi:10.5281/zenodo.19326174}
+  note    = {Zenodo v15 (unified release: paper + Atlas v0.3 data bundle).
+             doi:10.5281/zenodo.19504993
+             (concept DOI: 10.5281/zenodo.19326174)}
 }
 ```
 
