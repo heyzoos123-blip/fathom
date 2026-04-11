@@ -33,6 +33,7 @@ import math
 import warnings
 from typing import Any, List, Optional, Sequence
 
+from .. import config
 from ..core import StyxxRuntime
 from ..vitals import Vitals
 
@@ -64,12 +65,20 @@ class OpenAIWithVitals:
             from openai import OpenAI as _OpenAI
         except ImportError as e:
             raise ImportError(
-                "styxx.OpenAI requires openai-python. "
-                "Install with: pip install openai"
+                "styxx.OpenAI requires openai-python.\n"
+                "  Install with:  pip install openai\n"
+                "  Or install styxx with the extra:  pip install styxx[openai]\n"
+                f"  Underlying error: {e}"
             ) from e
         self._client = _OpenAI(*args, **kwargs)
-        self._runtime = StyxxRuntime()
-        self.chat = _ChatShim(self._client.chat, self._runtime)
+        # Respect the STYXX_DISABLED kill switch: if set, skip the
+        # runtime entirely and make this wrapper a pure pass-through.
+        if config.is_disabled():
+            self._runtime = None
+            self.chat = self._client.chat  # no shim, direct pass-through
+        else:
+            self._runtime = StyxxRuntime()
+            self.chat = _ChatShim(self._client.chat, self._runtime)
 
     def __getattr__(self, name):
         # Fall through to the real openai client for any attribute

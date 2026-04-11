@@ -223,3 +223,129 @@ def test_vitals_as_dict_json_roundtrip():
     text = json.dumps(as_dict)
     back = json.loads(text)
     assert back["phase1_pre"]["predicted_category"] == vitals.phase1_pre.predicted_category
+
+
+def test_vitals_as_dict_injects_confidence():
+    """as_dict must include computed confidence + top3 for each phase
+    (they're @property on PhaseReading and would be stripped by asdict)."""
+    adapter = Raw()
+    vitals = adapter.read(**_fake_trajectory(25))
+    as_dict = vitals.as_dict()
+    for phase_key in ("phase1_pre", "phase2_early", "phase3_mid", "phase4_late"):
+        phase = as_dict[phase_key]
+        if phase is None:
+            continue
+        assert "confidence" in phase, f"{phase_key} missing confidence"
+        assert "top3" in phase, f"{phase_key} missing top3"
+        assert 0.0 <= phase["confidence"] <= 1.0
+        assert len(phase["top3"]) == 3
+
+
+# ══════════════════════════════════════════════════════════════════
+# 7. Environment variable toggles
+# ══════════════════════════════════════════════════════════════════
+
+def test_config_disabled_env_var():
+    """STYXX_DISABLED=1 should make styxx.config.is_disabled() True."""
+    import os
+    from styxx import config
+    orig = os.environ.get("STYXX_DISABLED")
+    try:
+        # Off by default
+        os.environ.pop("STYXX_DISABLED", None)
+        assert config.is_disabled() is False
+        # Various truthy values
+        for v in ("1", "true", "YES", "On", "yes"):
+            os.environ["STYXX_DISABLED"] = v
+            assert config.is_disabled() is True, f"STYXX_DISABLED={v} should be truthy"
+        # Various falsy values
+        for v in ("", "0", "false", "no", "off"):
+            os.environ["STYXX_DISABLED"] = v
+            assert config.is_disabled() is False, f"STYXX_DISABLED={v} should be falsy"
+    finally:
+        if orig is None:
+            os.environ.pop("STYXX_DISABLED", None)
+        else:
+            os.environ["STYXX_DISABLED"] = orig
+
+
+def test_config_no_audit_env_var():
+    """STYXX_NO_AUDIT=1 should make config.is_audit_disabled() True."""
+    import os
+    from styxx import config
+    orig = os.environ.get("STYXX_NO_AUDIT")
+    try:
+        os.environ.pop("STYXX_NO_AUDIT", None)
+        assert config.is_audit_disabled() is False
+        os.environ["STYXX_NO_AUDIT"] = "1"
+        assert config.is_audit_disabled() is True
+    finally:
+        if orig is None:
+            os.environ.pop("STYXX_NO_AUDIT", None)
+        else:
+            os.environ["STYXX_NO_AUDIT"] = orig
+
+
+def test_config_skip_sha_dev_escape_hatch():
+    """STYXX_SKIP_SHA=1 should be readable + allows tampered centroids
+    to load (testing the dev escape hatch, not using it in prod)."""
+    import os
+    from styxx import config
+    orig = os.environ.get("STYXX_SKIP_SHA")
+    try:
+        os.environ.pop("STYXX_SKIP_SHA", None)
+        assert config.skip_sha_verification() is False
+        os.environ["STYXX_SKIP_SHA"] = "1"
+        assert config.skip_sha_verification() is True
+    finally:
+        if orig is None:
+            os.environ.pop("STYXX_SKIP_SHA", None)
+        else:
+            os.environ["STYXX_SKIP_SHA"] = orig
+
+
+def test_config_boot_speed_parses_cleanly():
+    """STYXX_BOOT_SPEED must parse floats and clamp negatives to 0."""
+    import os
+    from styxx import config
+    orig = os.environ.get("STYXX_BOOT_SPEED")
+    try:
+        os.environ.pop("STYXX_BOOT_SPEED", None)
+        assert config.boot_speed() == 1.0
+        os.environ["STYXX_BOOT_SPEED"] = "0"
+        assert config.boot_speed() == 0.0
+        os.environ["STYXX_BOOT_SPEED"] = "2.5"
+        assert config.boot_speed() == 2.5
+        os.environ["STYXX_BOOT_SPEED"] = "-3"
+        assert config.boot_speed() == 0.0  # clamped
+        os.environ["STYXX_BOOT_SPEED"] = "not-a-number"
+        assert config.boot_speed() == 1.0  # graceful fallback
+    finally:
+        if orig is None:
+            os.environ.pop("STYXX_BOOT_SPEED", None)
+        else:
+            os.environ["STYXX_BOOT_SPEED"] = orig
+
+
+# ══════════════════════════════════════════════════════════════════
+# 8. CLI audit log respects STYXX_NO_AUDIT
+# ══════════════════════════════════════════════════════════════════
+
+def test_audit_log_respects_no_audit_env(tmp_path, monkeypatch):
+    """When STYXX_NO_AUDIT=1, _write_audit must be a no-op."""
+    import os
+    from styxx.cli import _write_audit, _audit_log_path
+
+    monkeypatch.setenv("STYXX_NO_AUDIT", "1")
+    # Redirect audit path to a temp location so we don't pollute ~/.styxx
+    monkeypatch.setattr(
+        "styxx.cli._audit_log_path",
+        lambda: tmp_path / "chart.jsonl",
+    )
+
+    adapter = Raw()
+    vitals = adapter.read(**_fake_trajectory(25))
+    _write_audit(vitals, prompt="test", model="test-model")
+
+    # File should not have been created (audit disabled)
+    assert not (tmp_path / "chart.jsonl").exists()

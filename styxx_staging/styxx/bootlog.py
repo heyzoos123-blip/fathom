@@ -321,17 +321,30 @@ def boot(
     p.boot_line("runtime initialized", "ok")
     p.pause(0.03)
 
+    from . import config as _cfg
     home = Path.home() / ".styxx"
     home.mkdir(parents=True, exist_ok=True)
     chart_path = home / "chart.jsonl"
     if not chart_path.exists():
         chart_path.touch()
-    p.boot_line(f"audit log writing to ~/.styxx/chart.jsonl", "ok")
+    if _cfg.is_audit_disabled():
+        p.boot_line("audit log disabled (STYXX_NO_AUDIT=1)",
+                    "off", color_code=color.YELLOW)
+    else:
+        p.boot_line("audit log writing to ~/.styxx/chart.jsonl", "ok")
     p.pause(0.03)
-    p.boot_line("vitals stream open on localhost:8401", "ok")
+    # Local vitals stream is a v0.2 feature (websocket server).
+    # v0.1 only has stdout + audit log. Be honest about it in the
+    # boot log so nobody expects a server that isn't there.
+    p.boot_line("local vitals stream (websocket)", "pending v0.2",
+                color_code=color.DIM)
     p.pause(0.03)
-    p.boot_line("instruments armed · patient detected · signal stable",
-                "online", color_code=color.MATRIX)
+    if _cfg.is_disabled():
+        p.boot_line("STYXX_DISABLED=1 detected · runtime in pass-through mode",
+                    "standby", color_code=color.YELLOW)
+    else:
+        p.boot_line("instruments armed · patient detected · signal stable",
+                    "online", color_code=color.MATRIX)
     p.pause(0.1)
 
     # ── Closing banner ─────────────────────────────────────────────

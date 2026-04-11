@@ -45,6 +45,41 @@ __url__ = "https://github.com/heyzoos123-blip/styxx"
 __tagline__ = "nothing crosses unseen."
 
 
+# ── Windows console encoding safeguard ──────────────────────────────
+#
+# styxx emits Unicode box-drawing characters, sparkline blocks, and
+# status glyphs. On legacy Windows consoles running cp1252 the default
+# stdout can't encode them and `print()` crashes with UnicodeEncodeError.
+#
+# We reconfigure stdout/stderr to utf-8 on import whenever possible.
+# Python 3.7+ stdio streams expose .reconfigure(). We swallow any
+# failure silently — if we can't reconfigure, the user can still set
+# PYTHONIOENCODING=utf-8 manually, or pipe output through a tool that
+# handles encoding, or set STYXX_NO_COLOR=1 and live with the crash
+# only if it actually happens. Fail-open: never block import.
+def _auto_reconfigure_stdio():
+    import sys as _sys
+    for stream_name in ("stdout", "stderr"):
+        stream = getattr(_sys, stream_name, None)
+        if stream is None:
+            continue
+        reconfigure = getattr(stream, "reconfigure", None)
+        if reconfigure is None:
+            continue
+        try:
+            encoding = (getattr(stream, "encoding", "") or "").lower()
+            # Only reconfigure if we're on a legacy codec that can't
+            # handle the chars we emit. Don't touch utf-8 streams.
+            if encoding and "utf" not in encoding:
+                reconfigure(encoding="utf-8", errors="replace")
+        except Exception:
+            pass
+
+
+_auto_reconfigure_stdio()
+del _auto_reconfigure_stdio
+
+
 def OpenAI(*args, **kwargs):
     """Drop-in replacement for openai.OpenAI that emits cognitive vitals.
 

@@ -24,7 +24,7 @@ import time
 from pathlib import Path
 from typing import Optional, Sequence
 
-from . import __version__, __tagline__
+from . import __version__, __tagline__, config
 from .bootlog import boot
 from .cards import (
     Palette,
@@ -49,7 +49,9 @@ def _audit_log_path() -> Path:
 
 
 def _write_audit(vitals: Vitals, prompt: Optional[str], model: Optional[str]):
-    """Append one entry to the audit log."""
+    """Append one entry to the audit log. Respects STYXX_NO_AUDIT."""
+    if config.is_audit_disabled():
+        return
     path = _audit_log_path()
     entry = {
         "ts": time.time(),

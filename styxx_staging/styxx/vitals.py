@@ -102,23 +102,52 @@ def load_centroids(path: Optional[Path] = None,
 
     Raises FileNotFoundError if the centroid file is missing.
     Raises ValueError if the sha256 does not match EXPECTED_CENTROIDS_SHA256.
+
+    STYXX_SKIP_SHA=1 in the environment will skip the sha check.
+    Intended only for local dev — never set this in production.
     """
     path = Path(path) if path is not None else _default_centroids_path()
     if not path.exists():
         raise FileNotFoundError(
-            f"styxx centroids not found at {path}. "
-            "Run scripts/generate_centroids.py before importing styxx."
+            "\n"
+            "  styxx: calibration centroids not found.\n"
+            f"  expected location: {path}\n"
+            "  this file is shipped inside the styxx package and should\n"
+            "  be installed automatically with pip. if it's missing you\n"
+            "  likely have a broken install. try:\n"
+            "    pip install --force-reinstall styxx\n"
+            "  or if working from source:\n"
+            "    python scripts/generate_centroids.py \\\n"
+            "      --captures <atlas/captures> \\\n"
+            "      --out styxx/centroids/atlas_v0.3.json\n"
         )
 
-    if verify_sha:
+    # STYXX_SKIP_SHA dev escape hatch
+    import os
+    skip_sha = os.environ.get("STYXX_SKIP_SHA", "").strip().lower() in (
+        "1", "true", "yes", "on"
+    )
+
+    if verify_sha and not skip_sha:
         actual = _compute_sha256(path)
         if actual != EXPECTED_CENTROIDS_SHA256:
             raise ValueError(
-                f"styxx centroids sha256 mismatch at {path}.\n"
+                "\n"
+                "  styxx: calibration centroid sha256 mismatch.\n"
+                f"  file:     {path}\n"
                 f"  expected: {EXPECTED_CENTROIDS_SHA256}\n"
                 f"  actual:   {actual}\n"
-                "The shipped calibration data has been modified. "
-                "Styxx refuses to load unverified centroids."
+                "\n"
+                "  The shipped calibration data has been modified from\n"
+                "  its pinned release version. styxx refuses to load an\n"
+                "  altered centroid file — the whole point of the hash\n"
+                "  pin is to catch tampering or corruption.\n"
+                "\n"
+                "  If you know this is safe and are debugging locally,\n"
+                "  you can bypass the check with:\n"
+                "    STYXX_SKIP_SHA=1 python ...\n"
+                "\n"
+                "  Never set STYXX_SKIP_SHA in production.\n"
             )
 
     with open(path, "r", encoding="utf-8") as f:

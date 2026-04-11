@@ -168,6 +168,26 @@ each phase threshold comes from a numeric result in the Fathom research repo, no
 
 `styxx init` auto-detects which tiers are available in your environment and lights up the instruments accordingly.
 
+## environment variables
+
+styxx is quiet by default. these env vars let you tune or disable it without changing code:
+
+| variable | effect |
+|---|---|
+| `STYXX_DISABLED=1` | full kill switch. `from styxx import OpenAI` still works but returns an unmodified openai client. no vitals, no audit, no overhead. use for A/B rollbacks and emergency disable. |
+| `STYXX_NO_AUDIT=1` | disable the audit-log write. vitals still computed but nothing appended to `~/.styxx/chart.jsonl`. use for privacy-regulated deployments. |
+| `STYXX_NO_COLOR=1` | disable ANSI color output. useful for piping to files or logging systems that don't handle escape codes. |
+| `STYXX_BOOT_SPEED=0` | control boot-log timing: `0` = instant, `1.0` = normal (default), `2.0` = slower. |
+| `STYXX_SKIP_SHA=1` | skip centroid sha256 verification. **dev only** — bypasses tamper detection, never set in production. |
+
+```bash
+# production deployment — fast, quiet, no audit trail
+STYXX_NO_AUDIT=1 STYXX_NO_COLOR=1 python your_app.py
+
+# emergency rollback — styxx becomes invisible
+STYXX_DISABLED=1 python your_app.py
+```
+
 ## design principles
 
 1. **honest by construction.** every number on the boot log and in this README comes from a committed experiment in the Fathom research repo. no rounding up for marketing.
