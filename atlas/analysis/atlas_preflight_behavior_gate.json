@@ -1,0 +1,157 @@
+{
+  "n_records": 1078,
+  "pre_accuracy_vs_true": 0.2949907235621521,
+  "full_accuracy_vs_true": 0.32189239332096475,
+  "pre_full_agreement_rate": 0.33302411873840443,
+  "gated_by_confidence": [
+    {
+      "percentile": 25,
+      "threshold": 0.05104208622282558,
+      "n_subset": 808,
+      "pct_of_total": 0.7495361781076066,
+      "pre_acc_vs_true": 0.3069306930693069,
+      "full_acc_vs_true": 0.31064356435643564,
+      "agree_rate": 0.3378712871287129
+    },
+    {
+      "percentile": 50,
+      "threshold": 0.11984385934700792,
+      "n_subset": 539,
+      "pct_of_total": 0.5,
+      "pre_acc_vs_true": 0.3469387755102041,
+      "full_acc_vs_true": 0.3172541743970315,
+      "agree_rate": 0.34137291280148424
+    },
+    {
+      "percentile": 75,
+      "threshold": 0.20091309388620548,
+      "n_subset": 270,
+      "pct_of_total": 0.2504638218923933,
+      "pre_acc_vs_true": 0.31851851851851853,
+      "full_acc_vs_true": 0.3333333333333333,
+      "agree_rate": 0.32592592592592595
+    },
+    {
+      "percentile": 90,
+      "threshold": 0.29508098593789434,
+      "n_subset": 108,
+      "pct_of_total": 0.10018552875695733,
+      "pre_acc_vs_true": 0.3148148148148148,
+      "full_acc_vs_true": 0.3148148148148148,
+      "agree_rate": 0.3148148148148148
+    }
+  ],
+  "per_category": {
+    "retrieval": {
+      "n": 180,
+      "pre_acc": 0.1111111111111111,
+      "full_acc": 0.2111111111111111,
+      "agree_rate": 0.35555555555555557
+    },
+    "reasoning": {
+      "n": 180,
+      "pre_acc": 0.42777777777777776,
+      "full_acc": 0.6666666666666666,
+      "agree_rate": 0.45
+    },
+    "refusal": {
+      "n": 179,
+      "pre_acc": 0.16201117318435754,
+      "full_acc": 0.11173184357541899,
+      "agree_rate": 0.3463687150837989
+    },
+    "creative": {
+      "n": 180,
+      "pre_acc": 0.40555555555555556,
+      "full_acc": 0.4,
+      "agree_rate": 0.4166666666666667
+    },
+    "adversarial": {
+      "n": 179,
+      "pre_acc": 0.4581005586592179,
+      "full_acc": 0.07262569832402235,
+      "agree_rate": 0.1452513966480447
+    },
+    "hallucination": {
+      "n": 180,
+      "pre_acc": 0.20555555555555555,
+      "full_acc": 0.4666666666666667,
+      "agree_rate": 0.2833333333333333
+    }
+  },
+  "conditional_on_pre_prediction": {
+    "retrieval": {
+      "n_pre_predictions": 72,
+      "full_distribution": {
+        "retrieval": 0.2361111111111111,
+        "hallucination": 0.1527777777777778,
+        "creative": 0.08333333333333333,
+        "refusal": 0.08333333333333333,
+        "reasoning": 0.3472222222222222,
+        "adversarial": 0.09722222222222222
+      },
+      "agreement": 0.2361111111111111
+    },
+    "reasoning": {
+      "n_pre_predictions": 276,
+      "full_distribution": {
+        "retrieval": 0.32971014492753625,
+        "reasoning": 0.47101449275362317,
+        "adversarial": 0.028985507246376812,
+        "refusal": 0.06159420289855073,
+        "hallucination": 0.08333333333333333,
+        "creative": 0.025362318840579712
+      },
+      "agreement": 0.47101449275362317
+    },
+    "refusal": {
+      "n_pre_predictions": 153,
+      "full_distribution": {
+        "retrieval": 0.0784313725490196,
+        "reasoning": 0.28104575163398693,
+        "hallucination": 0.1437908496732026,
+        "refusal": 0.16993464052287582,
+        "adversarial": 0.19607843137254902,
+        "creative": 0.13071895424836602
+      },
+      "agreement": 0.16993464052287582
+    },
+    "creative": {
+      "n_pre_predictions": 225,
+      "full_distribution": {
+        "hallucination": 0.28888888888888886,
+        "retrieval": 0.008888888888888889,
+        "creative": 0.44,
+        "refusal": 0.08,
+        "adversarial": 0.11555555555555555,
+        "reasoning": 0.06666666666666667
+      },
+      "agreement": 0.44
+    },
+    "adversarial": {
+      "n_pre_predictions": 215,
+      "full_distribution": {
+        "reasoning": 0.35348837209302325,
+        "refusal": 0.16279069767441862,
+        "retrieval": 0.10697674418604651,
+        "creative": 0.11162790697674418,
+        "adversarial": 0.14883720930232558,
+        "hallucination": 0.11627906976744186
+      },
+      "agreement": 0.14883720930232558
+    },
+    "hallucination": {
+      "n_pre_predictions": 137,
+      "full_distribution": {
+        "retrieval": 0.13138686131386862,
+        "reasoning": 0.043795620437956206,
+        "hallucination": 0.40145985401459855,
+        "adversarial": 0.029197080291970802,
+        "creative": 0.291970802919708,
+        "refusal": 0.10218978102189781
+      },
+      "agreement": 0.40145985401459855
+    }
+  },
+  "chance": 0.16666666666666666
+}
