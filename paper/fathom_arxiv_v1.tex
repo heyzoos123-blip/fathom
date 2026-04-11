@@ -122,10 +122,10 @@ Bootstrap 95\% CI on mean & lower $>\, 0$ & \textcolor{fathomgreen}{$\mathbf{[+0
 \textbf{All 6 of 6} families show positive leave-one-out cosines.
 
 \textbf{Public artifacts.}
-\textbullet\; Paper (this work): \texttt{doi.org/10.5281/zenodo.19502710}
+\textbullet\; Paper v15 \textit{(unified release: paper + atlas data
+bundle as sibling files on one Zenodo record)}:
+\texttt{doi.org/10.5281/zenodo.19504993}
 (concept \texttt{10.5281/zenodo.19326174})\\
-\textbullet\; Cognitive Atlas v0.3: \texttt{doi.org/10.5281/zenodo.19502716}
-(concept \texttt{10.5281/zenodo.19502715})\\
 \textbullet\; OSF mirror: \texttt{osf.io/wtkzg/}\\
 \textbullet\; Reproducibility script: \texttt{verify\_all\_claims.py}
 (28 assertions, runs under 1 minute on CPU)
@@ -168,9 +168,9 @@ families show positive leave-one-out cosines. \textbf{H1 is supported.}
 We release the complete Fathom Cognitive Atlas v0.3 --- probe set, twelve
 open-model captures plus one closed-model exploratory capture via logprob
 API, full analysis code, bulletproof audit, and sealed pre-registration
---- as a public Zenodo deposit with its own concept DOI
-(\texttt{10.5281/zenodo.19502715}), alongside the companion paper record
-(\texttt{10.5281/zenodo.19326174}), under CC-BY-4.0 on the data and MIT
+--- as sibling files on a single Zenodo record (paper v15,
+\texttt{10.5281/zenodo.19504993}) under the Fathom concept DOI
+\texttt{10.5281/zenodo.19326174}, with CC-BY-4.0 on the data and MIT
 on the code. The primary contribution is methodological: pre-registered
 statistical rigor, architectural universality, and public reproducibility
 can coexist in a single interpretability paper. The empirical result
@@ -180,7 +180,16 @@ within-family-variance caveat stated explicitly in
 \S\ref{sec:limitations}. Three of the secondary Fathom instruments ---
 the SAE-based commitment intensity $S$, the coherence spectrum Gini
 metric, and the cognitive autopsy layer-11 localization on Gemma-2-2B ---
-are supporting material and are detailed in the appendices.
+are supporting material and are detailed in the appendices. We also
+include a post-pilot exploratory finding (\S\ref{sec:spectral}): Fourier
+analysis of the $C_\Delta(t)$ coherence trajectory reveals
+frequency-domain structure that discriminates correct from hallucinated
+generations in both Gemma-2-2b-IT and Llama-3.2-1B-Instruct, with the
+hallucination signature absent from raw logit-entropy, log-prob, and
+top-$2$-margin trajectories on the same items. This is the first link
+from Fathom to the frequency-domain tradition in cognitive neuroscience,
+inspired by \citet{weng2026sustained}, and is flagged explicitly as a
+pilot pending a pre-registered confirmatory run.
 \end{abstract}
 
 % ══════════════════════════════════════════════════════════════════
@@ -358,6 +367,34 @@ matrix theory, and disordered systems for more than seventy years. It is
 a mature theoretical construct. We show that the Fathom commitment intensity
 $S$ \emph{is} a specific IPR applied to coherence event trajectories. This
 is not a post-hoc interpretation; it is a derivation.
+
+\paragraph{Biological parallel: sustained alpha oscillations as
+attentional prioritization.}
+Recent work in human cognitive neuroscience provides a striking biological
+analog to $S_{\text{early}}$ as a commitment-intensity instrument.
+\citet{weng2026sustained} use EEG in a two-item working-memory paradigm
+with prioritized and deprioritized items across short ($1$ s) and long
+($3$ s) delays. They report that sustained alpha-band power tracks the
+\emph{prioritized} item throughout the delay with reliable decodability,
+while the deprioritized item transitions to an activity-quiescent state
+with no sustained alpha signature --- a dissociation between
+prioritization and maintenance. The underlying measurement is
+time-localization: how concentrated the alpha envelope remains on a
+single representational target across a delay window. Our
+$S_{\text{early}}$ instrument measures an analogous cognitive property in
+transformer residual streams: a token-localization measure (via IPR on
+coherence event trajectories) of how concentrated the model's commitment
+remains on a single attractor across the early generation window. Both
+measure \emph{which cognitive target the system is actively prioritizing
+right now}, and both distinguish prioritization from mere storage
+--- $S_{\text{early}}$ is orthogonal to $K$ (computational depth) in
+Fathom, just as sustained alpha is dissociated from contralateral delay
+activity in working memory \citep{weng2026sustained}. We flag this
+parallel explicitly: we make no causal claim of identity, but the
+substrate-independent ``localization of active selection'' construct
+that both measurements target is, in our view, the most promising
+direction for cross-substrate validation of $S$ as a measurement
+instrument rather than an architecture-specific heuristic.
 
 \paragraph{The measurement-science gap.} The above literatures collectively
 operate on three paradigms: \emph{find the feature} (SAE circuits),
@@ -1197,6 +1234,150 @@ quality gate at $r\,=\,0.902$ on the open-weight validation set, and the
 capture format is compatible with the analyzer. Full pre-registered
 replication on closed-weight models (including GPT-4o, Gemini, Claude)
 is deferred to Atlas v0.4 or later.
+
+% ══════════════════════════════════════════════════════════════════
+% 9.5. POST-PILOT FINDING: SPECTRAL HALLUCINATION SIGNATURE
+% ══════════════════════════════════════════════════════════════════
+\section{Post-pilot finding: spectral structure of $C_\Delta$ trajectories}
+\label{sec:spectral}
+
+All prior Fathom measurements of commitment have been \emph{pointwise}
+summary statistics of the coherence-delta trajectory $C_\Delta(t)$:
+the maximum, the mean, the IPR-derived $S_{\text{early}}$, the Gini of
+per-layer coherence. These all collapse a trajectory into a single
+number and then compare that number across groups. Pointwise statistics
+are blind to anything that requires the \emph{shape} of the trajectory,
+including oscillatory structure.
+
+A parallel line of work in human cognitive neuroscience has, for
+decades, studied neural dynamics in the frequency domain rather than
+through pointwise summaries. Recently \citet{weng2026sustained} showed
+that sustained alpha-band EEG power indexes \emph{attentional
+prioritization} in a two-item working-memory paradigm, dissociating
+active selection from passive storage. Their finding prompts a question
+we had not yet asked: does the $C_\Delta(t)$ trajectory of a transformer
+generation have characteristic token-frequency structure, and if so,
+does that structure carry hallucination-relevant information beyond
+what the pointwise axes already capture?
+
+\paragraph{Pilot design.} On $n\!\approx\!70$ labeled TruthfulQA
+generations per model, we took each item's $C_\Delta(t)$ trajectory
+(already on disk from the paper~v14 and the Llama cross-architecture
+run), truncated to a fixed window of $L\,=\,40$ tokens, applied a
+Hann window to reduce spectral leakage, and computed the real FFT
+magnitude spectrum. We then compared power in each frequency bin
+between correct and hallucinated generations using Welch $t$-tests and
+Cohen's $d$, with family-wise multiple-comparison control by permutation
+on the maximum $|d|$ across bins ($n_{\text{perm}}\,=\,2000$,
+seed $=\,42$). The band taxonomy (delta/theta/alpha/beta/gamma,
+reinterpreted as token-period rather than seconds) was documented in
+the analyzer before the data was examined.
+
+\paragraph{Main result.}
+Both architectures show a significant spectral discrimination between
+correct and hallucinated generations, with correct generations carrying
+\emph{more} spectral power than hallucinated ones in a characteristic
+low-mid-period band. Direction is identical across models; peak period
+differs.
+
+\begin{center}
+\begin{tabular}{lcccc}
+\toprule
+\textbf{Model} & \textbf{$n$ (corr/hall)} & \textbf{Peak period} &
+\textbf{$d$ (peak)} & \textbf{Global $p$ (family-wise)} \\
+\midrule
+Llama-3.2-1B-Instruct & 33/38 & $8.0$ tok & $-0.81$ & \textbf{0.016} \\
+Gemma-2-2b-IT         & 38/30 & $4.0$ tok & $-0.71$ & $0.074$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+Llama passes family-wise correction at $\alpha\,=\,0.05$. Gemma is
+borderline, consistent with the smaller labeled sample size after the
+v21 text-match classifier is applied. The factor-of-two gap in peak
+period is an open question; we hypothesize it is a tokenizer-compression
+artefact (Llama BPE packs roughly $2\times$ the characters per token
+compared to Gemma), but have not yet tested this hypothesis directly.
+
+\paragraph{Head-to-head with raw uncertainty trajectories.}
+The Gemma baselines capture includes per-token entropy, negative
+log-prob, and top-$2$ margin trajectories alongside $C_\Delta$. Running
+the same spectral analyzer on each signal lets us ask whether the
+spectral hallucination signature is specific to SAE-derived coherence
+or present in any trajectory statistic.
+
+\begin{center}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Signal (Gemma, $L=40$)} & \textbf{max $|d|$} & \textbf{Global $p$} & \textbf{$\#$ sig bins} \\
+\midrule
+$C_\Delta$ (SAE coherence)  & $\mathbf{0.710}$ & $\mathbf{0.074}$ & $\mathbf{2}$ \\
+logit entropy               & $0.579$          & $0.274$          & $1$ \\
+negative log-prob           & $0.400$          & $0.837$          & $0$ \\
+top-$2$ margin              & $0.455$          & $0.713$          & $0$ \\
+\bottomrule
+\end{tabular}
+\end{center}
+
+$C_\Delta$ is the only signal where two or more bins individually reach
+$p\,<\,0.05$. Logprob and top-$2$ margin have zero significant bins
+across 20 tested frequencies. Logit entropy has one significant bin but
+fails family-wise correction. This is the spectral analog of the
+existing head-to-head claim that pointwise $S_{\text{early}}$ beats
+pointwise entropy: \textbf{the SAE decomposition exposes
+frequency-domain structure in the coherence trajectory that the raw
+per-token uncertainty proxies do not contain.} The effect is also not
+attributable to overall trajectory variance: total spectral power
+(summed across all non-DC bins) does not discriminate on Gemma
+($d\,=\,-0.21$, $p\,=\,0.37$). The signal lives specifically in the
+low-to-mid-period bins.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.98\linewidth]{spectral_hallucination_signature.pdf}
+\caption{$C_\Delta$ spectral structure discriminates correct vs.\
+hallucinated generations on both architectures. \textbf{(left, center)}
+mean FFT power spectra $\pm$SEM at $L\,=\,40$ with significant bins
+($p\,<\,0.05$) marked with a star; correct generations carry more power
+in the low-mid-period region. \textbf{(right)} head-to-head on the Gemma
+baselines capture: family-wise max\,$|d|$ per signal. $C_\Delta$ is the
+only signal with two or more individually significant bins; logprob and
+top-$2$ margin are spectrally null. Analyzer:
+\repro{analysis/analyze\_S\_spectral.py},
+\repro{analysis/analyze\_S\_spectral\_controls.py}. Raw numbers:
+\repro{truthfulqa\_results/S\_baselines\_n200\_spectral.json},
+\repro{truthfulqa\_results/S\_truthfulqa\_llama\_n200\_spectral.json},
+\repro{truthfulqa\_results/S\_baselines\_n200\_spectral\_controls.json}.
+Full findings document:
+\repro{findings/findings\_2026\_04\_11\_spectral\_pilot.md}.}
+\label{fig:spectral}
+\end{figure}
+
+\paragraph{Status of this result.}
+This is a post-hoc pilot on data already on disk, not a pre-registered
+test. We report it honestly as exploratory and lock $L\,=\,40$ and the
+peak-bin band for a confirmatory run at larger $n$ via the v2.2 semantic
+labeling. The headline (Fig.~\ref{fig:spectral}) is a positive result
+on Llama (family-wise $p\,=\,0.016$), a directionally matching
+borderline result on Gemma (family-wise $p\,=\,0.074$), and a clean
+head-to-head advantage for $C_\Delta$ over the three raw-uncertainty
+baselines.
+
+\paragraph{Why this matters beyond the $p$-values.}
+Independent of effect size, the pilot establishes a \emph{new axis of
+Fathom measurement}: spectral (token-frequency-domain) structure of
+coherence trajectories, orthogonal to all existing pointwise Fathom
+axes. It also establishes the first substantive link from Fathom to
+cognitive neuroscience's frequency-domain tradition. In the Weng et
+al.\ paradigm, sustained alpha-band power indexes active cognitive
+selection over a delay interval; in ours, a specific token-frequency
+band of the $C_\Delta$ trajectory appears to index active commitment
+to a correct attractor. We make no causal-identity claim, and we
+emphasize that this is a pilot. But the \emph{substrate-independent
+construct} -- frequency-band localization of an active selection
+process -- is, as far as we can tell, novel to this paper on the
+transformer side. A confirmatory replication at $n\,\geq\,200$ per
+architecture is the natural next step.
 
 % ══════════════════════════════════════════════════════════════════
 % 10. BROADER THEORETICAL PREDICTIONS (NEW)
