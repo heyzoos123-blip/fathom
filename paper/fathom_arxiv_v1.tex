@@ -181,15 +181,20 @@ within-family-variance caveat stated explicitly in
 the SAE-based commitment intensity $S$, the coherence spectrum Gini
 metric, and the cognitive autopsy layer-11 localization on Gemma-2-2B ---
 are supporting material and are detailed in the appendices. We also
-include a post-pilot exploratory finding (\S\ref{sec:spectral}): Fourier
-analysis of the $C_\Delta(t)$ coherence trajectory reveals
-frequency-domain structure that discriminates correct from hallucinated
-generations in both Gemma-2-2b-IT and Llama-3.2-1B-Instruct, with the
-hallucination signature absent from raw logit-entropy, log-prob, and
-top-$2$-margin trajectories on the same items. This is the first link
-from Fathom to the frequency-domain tradition in cognitive neuroscience,
-inspired by \citet{weng2026sustained}, and is flagged explicitly as a
-pilot pending a pre-registered confirmatory run.
+include a post-pilot exploratory finding and its pre-registered
+sensitivity test (\S\ref{sec:spectral}): Fourier analysis of the
+$C_\Delta(t)$ coherence trajectory shows a bin-localized directional
+pattern (correct generations carrying more spectral power than
+hallucinated ones at a model-specific peak period) that replicates
+across architectures and across Fathom's v21 and v22 labelings but
+does not survive a pre-registered family-wise $p\,<\,0.05$ threshold
+across $20$ frequency bins at current sample sizes. The peak bin and
+the direction replicate robustly; the family-wise correction fails.
+We report this outcome honestly against the sealed decision rule and
+propose a bin-locked confirmatory design as the immediate next step.
+The frequency-domain framing is inspired by \citet{weng2026sustained}
+and constitutes the first link from Fathom to the frequency-domain
+tradition in cognitive neuroscience.
 \end{abstract}
 
 % ══════════════════════════════════════════════════════════════════
@@ -1273,31 +1278,66 @@ seed $=\,42$). The band taxonomy (delta/theta/alpha/beta/gamma,
 reinterpreted as token-period rather than seconds) was documented in
 the analyzer before the data was examined.
 
-\paragraph{Main result.}
-Both architectures show a significant spectral discrimination between
-correct and hallucinated generations, with correct generations carrying
-\emph{more} spectral power than hallucinated ones in a characteristic
-low-mid-period band. Direction is identical across models; peak period
-differs.
+\paragraph{Main result (pilot + pre-registered sensitivity).}
+The pilot uses Fathom's v21 text-match classifier
+(\texttt{classify\_generation} in
+\repro{analysis/analyze\_S\_truthfulqa.py}) for labels. As a robustness
+check, we pre-registered
+(\repro{prereg/spectral\_sensitivity\_prereg.md}, sealed in git commit
+\texttt{90a6f7d} before any v22 spectral analysis was run) a sensitivity
+analysis under Fathom's v22 semantic relabeling (sentence-transformers
+embedding with margin threshold $0.15$, as in the biphasic analysis).
+The v22 pipeline expands the labeled subset by $\sim\!40\%$ on each
+model. The sealed decision rule required both architectures' family-wise
+$p\,<\,0.05$ and the peak-bin direction correct $>$ hallucinated on
+both. Full results from both labelings:
 
 \begin{center}
-\begin{tabular}{lcccc}
+\begin{tabular}{llcccc}
 \toprule
-\textbf{Model} & \textbf{$n$ (corr/hall)} & \textbf{Peak period} &
-\textbf{$d$ (peak)} & \textbf{Global $p$ (family-wise)} \\
+\textbf{Model} & \textbf{Labeling} & \textbf{$n$ (c/h)} &
+\textbf{Peak period} & \textbf{Peak bin $p$} & \textbf{Fam.-wise $p$} \\
 \midrule
-Llama-3.2-1B-Instruct & 33/38 & $8.0$ tok & $-0.81$ & \textbf{0.016} \\
-Gemma-2-2b-IT         & 38/30 & $4.0$ tok & $-0.71$ & $0.074$ \\
+Llama-3.2-1B-Instruct & v21 (pilot)       & 33/38 & $8.00$ tok & $0.0016$ & $\mathbf{0.0155}$ \\
+Llama-3.2-1B-Instruct & v22 (sensitivity) & 39/54 & $8.00$ tok & $0.0087$ & $0.0805$ \\
+Gemma-2-2b-IT         & v21 (pilot)       & 38/30 & $4.00$ tok & $0.0040$ & $0.0745$ \\
+Gemma-2-2b-IT         & v22 (sensitivity) & 54/48 & $4.44$ tok & $0.0047$ & $0.0575$ \\
 \bottomrule
 \end{tabular}
 \end{center}
 
-Llama passes family-wise correction at $\alpha\,=\,0.05$. Gemma is
-borderline, consistent with the smaller labeled sample size after the
-v21 text-match classifier is applied. The factor-of-two gap in peak
-period is an open question; we hypothesize it is a tokenizer-compression
-artefact (Llama BPE packs roughly $2\times$ the characters per token
-compared to Gemma), but have not yet tested this hypothesis directly.
+\textbf{Sealed decision rule: H1 not supported.} Both family-wise
+$p$ values under the v22 sensitivity analysis fall in $[0.06,\,0.09]$,
+failing the sealed $0.05$ threshold. We report this outcome against
+the sealed rule without modification.
+
+\textbf{What replicates robustly across labelings.} The pilot's
+directional finding (correct $>$ hallucinated in spectral power at the
+peak bin) replicates perfectly on both models and both labelings. The
+peak-bin location is locked across labelings: Gemma peaks at period
+$4$-$4.4$ tokens under both v21 and v22; Llama peaks at period $8$
+tokens, identically, under both labelings. The per-bin $p$-value at the
+peak bin is $<\,0.01$ on all four runs. This bin-location and direction
+consistency across two independent labeling schemes is unlikely under
+the null.
+
+\textbf{What does not survive.} The naive family-wise correction across
+$20$ bins is sufficiently conservative that a signal of effect size
+$|d|\,\approx\,0.6$ concentrated in one bin does not reach the
+$0.05$ threshold at the current sample sizes
+($n\,\approx\,100$ per model after the $L\,=\,40$ truncation). The
+natural next test is a bin-locked confirmatory analysis: pre-register
+the exact peak bin from this analysis (period $4$ for Gemma-family,
+period $8$ for Llama-family), capture new TruthfulQA C$_\Delta$
+trajectories on an unseen model (Qwen2.5, Gemma-3-1B, or Llama-3.2-3B),
+and test power at that single locked bin. A single-df test avoids the
+multi-comparison tax entirely; an effect size of $0.6$ is comfortably
+detectable at $n\,\approx\,100$ per arm.
+
+The factor-of-two gap in peak period between the two model families is
+an open question; we hypothesize it is a tokenizer-compression artefact
+(Llama BPE packs roughly $2\times$ the characters per token compared to
+Gemma), but have not yet tested this hypothesis directly.
 
 \paragraph{Head-to-head with raw uncertainty trajectories.}
 The Gemma baselines capture includes per-token entropy, negative

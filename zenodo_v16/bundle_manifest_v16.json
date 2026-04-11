@@ -1,0 +1,13 @@
+{
+  "built_at": "2026-04-11T10:09:43-0400",
+  "source_commit": "90a6f7d57f5f77f7a2ab1fd2d2f963c4c2021df9",
+  "paper_bundle": {
+    "path": "zenodo_v16\\fathom_paper_v16.zip",
+    "filename": "fathom_paper_v16.zip",
+    "n_files": 38,
+    "bytes_on_disk": 3430389,
+    "bytes_raw": 4429757,
+    "sha256": "68e8a323ff17491a8a712eb2246f22618e443d793942d1b7b27fb0d63ec34f78",
+    "missing_files": []
+  }
+}
