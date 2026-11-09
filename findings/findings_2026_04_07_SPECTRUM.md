@@ -1,3 +1,8 @@
+> **correction notice, 2026-11-09.** this file is kept as it was written. the lab later withdrew or bounded statements in it. the text below is unchanged; these are the receipts:
+> - "First per-layer fault localization for hallucinations ever published" (line 96 as of this notice; the file's words); also "First decoding intervention based on computational geometry" (line 57; the file's words) and "First generation strategy optimizing for computational geometry" (line 104; the file's words) — 2026-09-29: the lab's rule keeps a priority sentence only if a survey under a frozen procedure priced it, and withdraws it otherwise; the lab reads these sentences as withdrawn — https://github.com/fathom-lab/styxx/blob/main/papers/NOTE_prior_art_credit_2026_09_29.md
+> - "AUC=0.685 (BEST single metric)" (line 14 as of this notice; the same auc at line 61) — 2026-11-09: the file labels 0.685 as the n=200 validation figure (line 61, "unpaired") and reports gini alone at auc 0.579 in its 5-fold cv table (line 46, n=200; table header line 40); the 0.685 carries no cross-validation label — receipt: this file
+> a dated banner, not an edit in place, is the lab's practice since 2026-06-21. the lab's current record is https://github.com/fathom-lab/styxx .
+
 # Findings: Layer Coherence Spectrum (April 7, 2026)
 
 ## Discovery
